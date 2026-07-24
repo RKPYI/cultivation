@@ -1,5 +1,5 @@
 {
-  "name": "genrojotree",
+  "name": "cultivation",
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
@@ -7,13 +7,13 @@
         "$className": "Folder",
         "Services": {
           "$className": "Folder",
-          "ExampleService": {
+          "QiService": {
             "$className": "Folder",
-            "ExampleServiceClient": {
-              "$path": "src/services/ExampleService/Client.luau"
+            "QiServiceClient": {
+              "$path": "src/services/QiService/Client.luau"
             },
-            "ExampleServiceUtils": {
-              "$path": "src/services/ExampleService/Utils.luau"
+            "QiServiceUtils": {
+              "$path": "src/services/QiService/Utils.luau"
             }
           }
         },
@@ -22,6 +22,12 @@
         },
         "Modules": {
           "$className": "Folder"
+        },
+        "BigNum": {
+          "$path": "src/BigNum.luau"
+        },
+        "Data": {
+          "$path": "src/Data.luau"
         }
       },
       "Packages": {
@@ -37,10 +43,10 @@
       },
       "Services": {
         "$className": "Folder",
-        "ExampleService": {
+        "QiService": {
           "$className": "Folder",
-          "ExampleServiceServer": {
-            "$path": "src/services/ExampleService/Server.luau"
+          "QiServiceServer": {
+            "$path": "src/services/QiService/Server.luau"
           }
         }
       },

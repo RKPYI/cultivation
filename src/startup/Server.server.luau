@@ -1,5 +1,8 @@
 local ServerScriptService = game:GetService("ServerScriptService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local ExampleServiceServer = require(ServerScriptService.Services.ExampleService.ExampleServiceServer)
+local QiServiceServer = require(ServerScriptService.Services.QiService.QiServiceServer)
+local Data = require(ReplicatedStorage.Shared.Data).server
 
-ExampleServiceServer:init()
+QiServiceServer:init()
