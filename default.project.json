@@ -15,6 +15,15 @@
             "QiServiceUtils": {
               "$path": "src/services/QiService/Utils.luau"
             }
+          },
+          "RealmService": {
+            "$className": "Folder",
+            "RealmServiceClient": {
+              "$path": "src/services/RealmService/Client.luau"
+            },
+            "RealmServiceUtils": {
+              "$path": "src/services/RealmService/Utils.luau"
+            }
           }
         },
         "Classes": {
@@ -47,6 +56,18 @@
           "$className": "Folder",
           "QiServiceServer": {
             "$path": "src/services/QiService/Server.luau"
+          }
+        },
+        "RealmService": {
+          "$className": "Folder",
+          "RealmServiceServer": {
+            "$path": "src/services/RealmService/Server.luau"
+          }
+        },
+        "UIService": {
+          "$className": "Folder",
+          "UIServiceServer": {
+            "$path": "src/services/UIService/Server.luau"
           }
         }
       },
