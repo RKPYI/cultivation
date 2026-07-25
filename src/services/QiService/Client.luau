@@ -10,11 +10,35 @@ local Player = Players.LocalPlayer
 
 local networker = nil
 local QiServiceClient = {}
+local isTouching = {}
 
 function QiServiceClient.init(self)
 	networker = Networker.new("QiService", QiServiceClient)
 
+	self:setupAreaListener()
 	self:AreaEntered()
+end
+
+local function CalculateDist(area: Part)
+	area.Touched:Connect(function(hit)
+		if game.Players:GetPlayerFromCharacter(hit.Parent) then
+			isTouching[area.Name] = true
+		end
+	end)
+	area.TouchEnded:Connect(function(hit)
+		if game.Players:GetPlayerFromCharacter(hit.Parent) then
+			isTouching[area.Name] = nil
+		end
+	end)
+end
+
+function QiServiceClient.setupAreaListener()
+	for _, area in QiAreaFolder:GetChildren() do
+		if not area:IsA("Part") then
+			continue
+		end
+		CalculateDist(area)
+	end
 end
 
 function QiServiceClient.AreaEntered(self)
@@ -24,11 +48,9 @@ function QiServiceClient.AreaEntered(self)
 				continue
 			end
 
-			local Distance = Player:DistanceFromCharacter(area.Position)
-			local Range = area.Size.Y
-
-			if Distance < Range then
+			if isTouching[area.Name] then
 				self.GiveQi()
+				break
 			end
 		end
 	end)
