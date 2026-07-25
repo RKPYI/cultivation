@@ -9,6 +9,7 @@ local function RootUI()
 	return e(React.Fragment, nil, {
 		qiCounter = e(Counter, {
 			currency = "qi",
+			image = "rbxassetid://81588162443025",
 		}),
 	})
 end

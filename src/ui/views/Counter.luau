@@ -5,6 +5,7 @@ local CounterItem = require(ReplicatedStorage.UI.components.CounterItem)
 
 export type CounterProps = {
 	currency: string,
+	image: string?,
 }
 
 local e = React.createElement
@@ -23,6 +24,7 @@ local function Counter(props: CounterProps)
 
 		CounterComponent = e(CounterItem, {
 			currency = props.currency,
+			image = props.image,
 		}),
 	})
 end
