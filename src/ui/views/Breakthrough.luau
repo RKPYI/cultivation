@@ -1,6 +1,13 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local RealmServiceClient = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceClient)
+local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
+local Data = require(ReplicatedStorage.Shared.Data).client
+
+local Player = Players.LocalPlayer
 local Text = require(ReplicatedStorage.UI.components.Text)
 local e = React.createElement
 
@@ -10,6 +17,38 @@ local e = React.createElement
 -- }
 
 local function Breakthrough()
+	local initialQiReq = BigNum.fromNumber(10)
+	local initialQiAmount = BigNum.fromNumber(100)
+
+	local qiReq, setQiReq = React.useState(initialQiReq)
+	local qiAmount, setQiAmount = React.useState(initialQiAmount)
+	local qiText = BigNum.toSuffix(qiAmount) .. " / " .. BigNum.toSuffix(qiReq)
+	local rawPercentage = BigNum.div(qiAmount, qiReq)
+	local percentage = math.clamp(BigNum.toNumber(rawPercentage), 0, 1)
+	local breakthrough = percentage == 1
+
+	React.useEffect(function()
+		if not Data then
+			return
+		end
+
+		setQiAmount(Data.qi())
+		setQiReq(RealmServiceUtils.CalculateBreakthroughReq(Data.realm()))
+
+		local qiConn = Data.qi.Changed(function(newQi)
+			setQiAmount(newQi)
+		end)
+
+		local realmConn = Data.realm.Changed(function(newRealm)
+			setQiReq(RealmServiceUtils.CalculateBreakthroughReq(newRealm))
+		end)
+
+		return function()
+			qiConn:Disconnect()
+			realmConn:Disconnect()
+		end
+	end, {})
+
 	return e("Frame", {
 		Position = UDim2.new(0.25, 0, 0, 10),
 		Size = UDim2.new(0.5, 0, 0.025, 10),
@@ -20,27 +59,32 @@ local function Breakthrough()
 		}),
 		currentProgress = e("Frame", {
 			BackgroundColor3 = Color3.fromRGB(255, 255, 0),
-			Size = UDim2.fromScale(0.5, 1), -- xScale CHANGE TO DYNAMIC --> Percentage of qi / qiNeededtoBreakthrough
+			Size = UDim2.fromScale(percentage, 1),
 		}, {
 			UICorner = e("UICorner"),
 		}),
 		Percent = e(Text, {
-			text = "50%", -- Percentage AMOUNT --> {Percent}%
+			text = string.format("%.2f%%", percentage * 100), -- Show max 2 decimal
 			size = UDim2.fromScale(0.1, 1),
 			pos = UDim2.new(1, 5, 0, 0),
 		}),
 		qiText = e(Text, {
-			text = "1 / 10", -- playerQi / qiNeededtoBreakthrough --> useSuffix
+			text = qiText,
 			pos = UDim2.new(0, 0, 0.5, 20),
 		}),
 		BreakthroughButton = e("TextButton", {
 			BackgroundColor3 = Color3.fromRGB(255, 255, 0),
 			Position = UDim2.new(0.4, 0, 2, 20),
 			Size = UDim2.fromScale(0.2, 2),
-			Visible = false, -- Visible if percentage AMOUNT = 100%
+			Visible = breakthrough,
 			Font = Enum.Font.GothamBlack,
+			TextColor3 = Color3.fromRGB(255, 255, 255),
 			TextScaled = true,
-			Text = "BREAKTHROUGH",
+			Text = "Breakthrough",
+
+			[React.Event.Activated] = function()
+				RealmServiceClient.networker:fire("Breakthrough")
+			end,
 		}, {
 			UICorner = e("UICorner"),
 			UIStroke = e("UIStroke", {
@@ -51,10 +95,10 @@ local function Breakthrough()
 				ApplyStrokeMode = "Border",
 			}),
 			UIPadding = e("UIPadding", {
-				PaddingTop = UDim.new(0.01, 0),
-				PaddingLeft = UDim.new(0.01, 0),
-				PaddingBottom = UDim.new(0.01, 0),
-				PaddingRight = UDim.new(0.01, 0),
+				PaddingTop = UDim.new(0.01, 1),
+				PaddingLeft = UDim.new(0.01, 1),
+				PaddingBottom = UDim.new(0.01, 1),
+				PaddingRight = UDim.new(0.01, 1),
 			}),
 		}),
 	})

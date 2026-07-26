@@ -18,12 +18,10 @@ export type RealmServiceClient = typeof(setmetatable({ __index = {} })) & {
 	networker: any,
 }
 
-local networker = nil
 local RealmServiceClient = {}
-local isTouching = {}
 
 function RealmServiceClient.init(self)
-	networker = Networker.new("RealmService", RealmServiceClient)
+	self.networker = Networker.new("RealmService", RealmServiceClient)
 
 	Players.PlayerAdded:Connect(function(player: Player)
 		self:OnPlayerAdded(player)
