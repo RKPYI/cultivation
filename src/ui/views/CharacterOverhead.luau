@@ -54,7 +54,7 @@ local function CharacterOverhead(props: CharProps)
 		Adornee = props.adornee,
 
 		-- quesstionable
-		Size = UDim2.fromScale(7, 2),
+		Size = UDim2.fromScale(10, 2),
 		StudsOffset = Vector3.new(0, 2, 0),
 	}, {
 		UIListLayout = e("UIListLayout", {
