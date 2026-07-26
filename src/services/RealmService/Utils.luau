@@ -43,4 +43,20 @@ function Realm.CalculateBreakthroughReq(realm: number): BigNum.BN
 	return totalReq
 end
 
+function Realm.GetQiBonus(realm: number): BigNum.BN
+	local baseQiPerSec = 1.5 * (realm ^ 1.8)
+
+	local realmTier = math.floor((realm - 1) / 10)
+	local tierFactor = 9 ^ realmTier
+
+	local qiPerSecond = baseQiPerSec * tierFactor
+
+	local isMajorBottleneck = (realm % 10 == 0)
+	if isMajorBottleneck then
+		qiPerSecond *= 1.25
+	end
+
+	return BigNum.fromNumber(math.floor(qiPerSecond))
+end
+
 return Realm

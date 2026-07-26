@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
 type State = {
@@ -92,7 +93,9 @@ end
 function QiServiceServer.GetTotalQiGiven(player: Player): BigNum.BN
 	local BaseQi = BigNum.fromNumber(1)
 
-	local TotalQiGiven = BaseQi -- WIll add more multiplier here when exist
+	local qiRealm = RealmServiceUtils.GetQiBonus(Data[player].realm())
+
+	local TotalQiGiven = BigNum.mul(BaseQi, qiRealm)
 
 	return TotalQiGiven
 end
