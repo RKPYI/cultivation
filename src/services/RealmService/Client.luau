@@ -7,12 +7,35 @@ local Networker = require(ReplicatedStorage.Packages.Networker).client
 local Data = require(ReplicatedStorage.Shared.Data).client
 local Player = Players.LocalPlayer
 
+export type RealmServiceClient = typeof(setmetatable({ __index = {} })) & {
+	init: (self: RealmServiceClient) -> (),
+	OnPlayerAdded: (self: RealmServiceClient, player: Player) -> (),
+	OnPlayerRemoving: (self: RealmServiceClient, player: Player) -> (),
+
+	-- ... Add More Functions Here
+
+	-- Networker
+	networker: any,
+}
+
 local networker = nil
 local RealmServiceClient = {}
 local isTouching = {}
 
 function RealmServiceClient.init(self)
 	networker = Networker.new("RealmService", RealmServiceClient)
+
+	Players.PlayerAdded:Connect(function(player: Player)
+		self:OnPlayerAdded(player)
+	end)
+
+	Players.PlayerRemoving:Connect(function(player: Player)
+		self:OnPlayerRemoving(player)
+	end)
 end
+
+function RealmServiceClient.OnPlayerAdded(self, player: Player) end
+
+function RealmServiceClient.OnPlayerRemoving(self, player: Player) end
 
 return RealmServiceClient

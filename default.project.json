@@ -37,6 +37,9 @@
         },
         "Data": {
           "$path": "src/Data.luau"
+        },
+        "Roman": {
+          "$path": "src/Roman.luau"
         }
       },
       "Packages": {

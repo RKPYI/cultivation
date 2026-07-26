@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local Roman = require(ReplicatedStorage.Shared.Roman)
 local Realm = {}
 
 Realm.Name = {
@@ -9,10 +13,34 @@ Realm.Name = {
 	"Soul Formation",
 }
 
-function Realm.RealmName(realm: number)
-	local bigRealm = realm
+function Realm.RealmName(realm: number): string
+	local bigRealm = math.floor((realm - 1) / 10) + 1
+	local smallRealm = (realm - 1) % 10 + 1
 
-	return "Qi Refining" -- NOT IMPLEMENTED YET
+	local baseName = Realm.Name[bigRealm]
+	if not baseName then
+		return "ABOVE THE SYSTEM"
+	end
+
+	local RealmName = baseName .. " " .. Roman(smallRealm)
+
+	return RealmName
+end
+
+function Realm.CalculateBreakthroughReq(realm: number): BigNum.BN
+	local baseQi = 10 * (realm ^ 2)
+
+	local realmTier = math.floor((realm - 1) / 10)
+
+	local tierFactor = 12 ^ realmTier
+
+	local isMajorBottleneck = (realm % 10 == 0)
+	local bottleneckMult = isMajorBottleneck and 3 or 1.0
+
+	local totalReq = BigNum.mul(baseQi, tierFactor)
+	totalReq = BigNum.mul(totalReq, bottleneckMult)
+
+	return totalReq
 end
 
 return Realm

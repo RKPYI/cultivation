@@ -1,11 +1,18 @@
+--!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
-type State = {}
+type State = {
+	playerRealmData: { [Player]: {
+		realmName: string,
+		qiReq: BigNum.BN,
+	} },
+}
 
 export type RealmServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
 	init: (self: RealmServiceServer) -> (),
@@ -14,6 +21,8 @@ export type RealmServiceServer = typeof(setmetatable({} :: State, { __index = {}
 	OnPlayerRemoving: (self: RealmServiceServer, player: Player) -> (),
 
 	Breakthrough: (self: RealmServiceServer, player: Player) -> (),
+	SetRealmState: (self: RealmServiceServer, player: Player) -> (),
+	GetRealmData: (self: RealmServiceServer, player: Player) -> { realmName: string, qiReq: BigNum.BN },
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -24,6 +33,8 @@ local RealmServiceServer = {} :: RealmServiceServer
 
 -- Setup
 function RealmServiceServer.init(self: RealmServiceServer)
+	self.playerRealmData = {}
+
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
 		"RealmService",
@@ -31,6 +42,7 @@ function RealmServiceServer.init(self: RealmServiceServer)
 		{
 			-- Add public network
 			self.Breakthrough,
+			self.GetRealmData,
 		} :: any
 	)
 
@@ -43,27 +55,17 @@ function RealmServiceServer.init(self: RealmServiceServer)
 	end)
 end
 
-function RealmServiceServer.OnPlayerAdded(self: RealmServiceServer, player: Player) end
+function RealmServiceServer.OnPlayerAdded(self: RealmServiceServer, player: Player)
+	if Data[player] then
+		self:SetRealmState(player)
+	end
+end
 
-function RealmServiceServer.OnPlayerRemoving(self: RealmServiceServer, player: Player) end
+function RealmServiceServer.OnPlayerRemoving(self: RealmServiceServer, player: Player)
+	self.playerRealmData[player] = nil
+end
 
 function RealmServiceServer.start(self: RealmServiceServer) end
-
-local function CalculateBreakthrough(realm: number): BigNum.BN
-	local baseQi = 10 * (realm ^ 2)
-
-	local realmTier = math.floor((realm - 1) / 10)
-
-	local tierFactor = 12 ^ realmTier
-
-	local isMajorBottleneck = (realm % 10 == 0)
-	local bottleneckMult = isMajorBottleneck and 3 or 1.0
-
-	local totalReq = BigNum.mul(baseQi, tierFactor)
-	totalReq = BigNum.mul(totalReq, bottleneckMult)
-
-	return totalReq
-end
 
 function RealmServiceServer.Breakthrough(self, player)
 	if not Data[player] then
@@ -72,14 +74,28 @@ function RealmServiceServer.Breakthrough(self, player)
 
 	local playerQi = Data[player].qi()
 	local playerRealm = Data[player].realm()
-	local qiReq = CalculateBreakthrough(playerRealm)
+	local qiReq = RealmServiceUtils.CalculateBreakthroughReq(playerRealm)
 
-	if BigNum.lt(qiReq, playerQi) then
+	if BigNum.gte(playerQi, qiReq) then
 		local newPlayerQi = BigNum.sub(playerQi, qiReq)
 		Data[player].qi(newPlayerQi)
 		Data[player].realm(playerRealm + 1)
+		self:SetRealmState(player)
 		print("BREAKTHROUGH SUCCESS!!")
 	end
+end
+
+function RealmServiceServer.SetRealmState(self, player)
+	local playerRealm = Data[player].realm()
+	local realmName = RealmServiceUtils.RealmName(playerRealm)
+	local qiReq = RealmServiceUtils.CalculateBreakthroughReq(playerRealm)
+
+	self.playerRealmData[player] = { realmName = realmName, qiReq = qiReq }
+end
+
+function RealmServiceServer.GetRealmData(self, player)
+	local data = self.playerRealmData[player] :: { realmName: string, qiReq: BigNum.BN }
+	return data
 end
 
 return RealmServiceServer
