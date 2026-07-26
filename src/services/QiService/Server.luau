@@ -51,8 +51,6 @@ function QiServiceServer.init(self: QiServiceServer)
 	Players.PlayerRemoving:Connect(function(player: Player)
 		self:OnPlayerRemoving(player)
 	end)
-
-	print("hi from QiServiceServer!")
 end
 
 function QiServiceServer.OnPlayerAdded(self: QiServiceServer, player: Player)
@@ -65,9 +63,7 @@ function QiServiceServer.OnPlayerRemoving(self: QiServiceServer, player: Player)
 	self.GiveQiCooldown[player] = nil
 end
 
-function QiServiceServer.start(self: QiServiceServer)
-	print("QiService Started.")
-end
+function QiServiceServer.start(self: QiServiceServer) end
 
 -- Qi Functions
 function QiServiceServer.GiveQi(self: QiServiceServer, player: Player)
@@ -91,8 +87,6 @@ function QiServiceServer.GiveQi(self: QiServiceServer, player: Player)
 	end)
 
 	local qi = Data[player].qi() :: BigNum.BN
-
-	print("Qi Added: " .. BigNum.toSuffix(qi))
 end
 
 function QiServiceServer.GetTotalQiGiven(player: Player): BigNum.BN

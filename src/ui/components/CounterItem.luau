@@ -18,7 +18,6 @@ end
 local function CounterItem(props: CounterProps)
 	local initialValue: BigNum.BN = BigNum.fromNumber(0)
 	if Data[props.currency] then
-		print("Initialized Already Getting it.")
 		initialValue = Data[props.currency]()
 	end
 

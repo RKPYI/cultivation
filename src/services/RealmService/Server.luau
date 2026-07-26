@@ -81,7 +81,6 @@ function RealmServiceServer.Breakthrough(self, player)
 		Data[player].qi(newPlayerQi)
 		Data[player].realm(playerRealm + 1)
 		self:SetRealmState(player)
-		print("BREAKTHROUGH SUCCESS!!")
 	end
 end
 
