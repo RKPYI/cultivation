@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local React = require(ReplicatedStorage.Packages.React)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
@@ -17,6 +18,8 @@ local e = React.createElement
 -- }
 
 local function Breakthrough()
+	local progressBarRef = React.useRef(nil)
+
 	local initialQiReq = BigNum.fromNumber(10)
 	local initialQiAmount = BigNum.fromNumber(100)
 
@@ -27,6 +30,7 @@ local function Breakthrough()
 	local percentage = math.clamp(BigNum.toNumber(rawPercentage), 0, 1)
 	local breakthrough = percentage == 1
 
+	-- Update Qi and QiReq
 	React.useEffect(function()
 		if not Data then
 			return
@@ -49,6 +53,25 @@ local function Breakthrough()
 		end
 	end, {})
 
+	-- Smooth progress bar animation
+	React.useEffect(function()
+		local frame = progressBarRef.current
+		if not frame then
+			return
+		end
+
+		local tweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+		local targetSize = UDim2.fromScale(percentage, 1)
+		local tween = TweenService:Create(frame, tweenInfo, { Size = targetSize })
+
+		tween:Play()
+
+		return function()
+			tween:Cancel()
+		end
+	end, { percentage })
+
 	return e("Frame", {
 		Position = UDim2.new(0.25, 0, 0, 10),
 		Size = UDim2.new(0.5, 0, 0.025, 10),
@@ -59,7 +82,7 @@ local function Breakthrough()
 		}),
 		currentProgress = e("Frame", {
 			BackgroundColor3 = Color3.fromRGB(255, 255, 0),
-			Size = UDim2.fromScale(percentage, 1),
+			ref = progressBarRef,
 		}, {
 			UICorner = e("UICorner"),
 		}),
