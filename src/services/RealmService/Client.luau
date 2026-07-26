@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local Networker = require(ReplicatedStorage.Packages.Networker).client
@@ -35,5 +36,18 @@ end
 function RealmServiceClient.OnPlayerAdded(self, player: Player) end
 
 function RealmServiceClient.OnPlayerRemoving(self, player: Player) end
+
+function RealmServiceClient.start(self, player: Player)
+	local BreakthroughSfx = SoundService:WaitForChild("breakthroughsfx") :: Sound
+
+	-- Add Sfx when realm changed
+	Data.realm.Changed(function()
+		if not BreakthroughSfx then
+			return
+		end
+
+		BreakthroughSfx:Play()
+	end)
+end
 
 return RealmServiceClient

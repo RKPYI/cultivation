@@ -11,3 +11,5 @@ QiServiceClient:init()
 RealmServiceClient:init()
 
 MountUI()
+
+RealmServiceClient:start(Player)
