@@ -34,21 +34,24 @@ end
 
 function QiServiceClient.setupAreaListener()
 	for _, area in QiAreaFolder:GetChildren() do
-		if not area:IsA("Part") then
+		local zone = area:IsA("Model") and area:WaitForChild("Zone")
+		if not zone then
 			continue
 		end
-		CalculateDist(area)
+
+		CalculateDist(zone)
 	end
 end
 
 function QiServiceClient.AreaEntered(self)
 	RunService.RenderStepped:Connect(function()
 		for _, area in QiAreaFolder:GetChildren() do
-			if not area:IsA("Part") then
+			local zone = area:IsA("Model") and area:WaitForChild("Zone")
+			if not zone then
 				continue
 			end
 
-			if isTouching[area.Name] then
+			if isTouching[zone.Name] then
 				self.GiveQi()
 				break
 			end
