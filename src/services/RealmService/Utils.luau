@@ -27,36 +27,29 @@ function Realm.RealmName(realm: number): string
 	return RealmName
 end
 
+local function getBigRealm(realm: number)
+	return math.floor((realm - 1) / 10) -- Qi Refining (realm 1-10) = 0
+end
+
 function Realm.CalculateBreakthroughReq(realm: number): BigNum.BN
-	local baseQi = 10 * (realm ^ 2)
+	local baseQi = 2 ^ realm * 10
+	local bigRealm = getBigRealm(realm)
 
-	local realmTier = math.floor((realm - 1) / 10)
-
-	local tierFactor = 12 ^ realmTier
-
-	local isMajorBottleneck = (realm % 10 == 0)
-	local bottleneckMult = isMajorBottleneck and 3 or 1.0
-
-	local totalReq = BigNum.mul(baseQi, tierFactor)
-	totalReq = BigNum.mul(totalReq, bottleneckMult)
+	local bigRealmQi = BigNum.pow10(BigNum.fromNumber(bigRealm)) -- Multiply by 10 every major realm
+	local totalReq = BigNum.mul(BigNum.fromNumber(baseQi), bigRealmQi)
+	totalReq = BigNum.mul(totalReq, BigNum.pow(BigNum.fromNumber(2), bigRealm))
 
 	return totalReq
 end
 
 function Realm.GetQiBonus(realm: number): BigNum.BN
-	local baseQiPerSec = 1.5 * (realm ^ 1.8)
+	local baseQi = 1.8 ^ realm * 15
+	local bigRealm = getBigRealm(realm)
 
-	local realmTier = math.floor((realm - 1) / 10)
-	local tierFactor = 9 ^ realmTier
+	local bigRealmQi = BigNum.pow(BigNum.fromNumber(9), BigNum.fromNumber(bigRealm))
+	local totalQi = BigNum.mul(BigNum.fromNumber(baseQi), bigRealmQi)
 
-	local qiPerSecond = baseQiPerSec * tierFactor
-
-	local isMajorBottleneck = (realm % 10 == 0)
-	if isMajorBottleneck then
-		qiPerSecond *= 1.25
-	end
-
-	return BigNum.fromNumber(math.floor(qiPerSecond))
+	return totalQi
 end
 
 return Realm
