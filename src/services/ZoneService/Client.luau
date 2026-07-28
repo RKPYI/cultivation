@@ -19,7 +19,6 @@ function ZoneServiceClient.init(self)
 
 	self:setupAreaUI()
 	self:setupAreaListener()
-	self:AreaEntered()
 end
 
 function ZoneServiceClient.setupAreaUI(self)
@@ -53,7 +52,7 @@ function ZoneServiceClient.setupAreaUI(self)
 	end
 end
 
-function ZoneServiceClient.setupAreaListener()
+function ZoneServiceClient.setupAreaListener(self)
 	for _, area in QiAreaFolder:GetChildren() do
 		local zone = area:IsA("Model") and area:WaitForChild("Zone")
 		if not zone then
@@ -62,26 +61,19 @@ function ZoneServiceClient.setupAreaListener()
 
 		ZoneServiceUtils.CalculateDist(zone, function(isInside)
 			isTouching[zone.Parent.Name] = isInside
-		end)
-	end
-end
-
-function ZoneServiceClient.AreaEntered(self)
-	RunService.RenderStepped:Connect(function()
-		for _, area in QiAreaFolder:GetChildren() do
-			local zone = area:IsA("Model") and area:WaitForChild("Zone")
-			if not zone and not ZoneServiceUtils.Data[zone.Name] then
-				continue
-			end
 
 			local realmReq = ZoneServiceUtils.Data[zone.Parent.Name].realmReq
 
-			if isTouching[zone.Parent.Name] and Data.realm() >= realmReq then
-				self:GiveQi(area.Name)
-				break
+			if isInside then
+				task.spawn(function()
+					while isTouching[zone.Parent.Name] and Data.realm() >= realmReq do
+						self:GiveQi(area.Name)
+						task.wait(1)
+					end
+				end)
 			end
-		end
-	end)
+		end)
+	end
 end
 
 function ZoneServiceClient.GiveQi(self, zoneName: string)
