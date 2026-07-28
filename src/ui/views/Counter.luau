@@ -25,6 +25,7 @@ local function Counter(props: CounterProps)
 		CounterComponent = e(CounterItem, {
 			currency = props.currency,
 			image = props.image,
+			persecCounter = true,
 		}),
 	})
 end

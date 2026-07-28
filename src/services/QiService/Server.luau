@@ -21,7 +21,7 @@ export type QiServiceServer = typeof(setmetatable({} :: State, { __index = {} })
 
 	-- Qi Functions
 	GiveQi: (self: QiServiceServer, player: Player, zoneName: string) -> (),
-	GetTotalQiGiven: (player: Player, zoneName: string?) -> BigNum.BN,
+	GetTotalQiGiven: (self: QiServiceServer, player: Player, zoneName: string?) -> BigNum.BN,
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -82,23 +82,27 @@ function QiServiceServer.GiveQi(self: QiServiceServer, player: Player, zoneName:
 	self.GiveQiCooldown[player] = currentTime
 
 	-- Giving Qi
-	local QiAmount = QiServiceServer.GetTotalQiGiven(player, zoneName)
+	local QiAmount = QiServiceServer:GetTotalQiGiven(player, zoneName)
 
 	Data[player].qi(function(qi: BigNum.BN)
 		return BigNum.add(qi, QiAmount)
 	end)
 
-	local qi = Data[player].qi() :: BigNum.BN
+	self.networker:set(player, "QiGranted", QiAmount)
 end
 
-function QiServiceServer.GetTotalQiGiven(player: Player, zoneName: string?): BigNum.BN
+function QiServiceServer.GetTotalQiGiven(self: QiServiceServer, player: Player, zoneName: string?): BigNum.BN
 	local BaseQi = BigNum.fromNumber(1)
 
 	local qiRealm = RealmServiceUtils.GetQiBonus(Data[player].realm())
 
 	local qiZone = 1
 	if zoneName and ZoneServiceUtils.Data[zoneName] then
-		qiZone = ZoneServiceUtils.Data[zoneName].qiMultiplier or 1
+		-- CHECK IF PLAYER ACTUALLY HAS ENOUGH REALM
+		local realmReq = ZoneServiceUtils.Data[zoneName].realmReq
+		if Data[player].realm() >= realmReq then
+			qiZone = ZoneServiceUtils.Data[zoneName].qiMultiplier or 1
+		end
 	end
 
 	local TotalQiGiven = BigNum.mul(BaseQi, qiRealm)

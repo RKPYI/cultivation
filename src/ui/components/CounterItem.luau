@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local Data = require(ReplicatedStorage.Shared.Data).client
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local QiGranted = require(ReplicatedStorage.UI.components.QiGranted)
 local Text = require(ReplicatedStorage.UI.components.Text)
 
 local e = React.createElement
@@ -10,6 +11,7 @@ local e = React.createElement
 type CounterProps = {
 	currency: string,
 	image: string?,
+	persecCounter: boolean,
 }
 
 local function Capitalize(letter: string)
@@ -61,6 +63,8 @@ local function CounterItem(props: CounterProps)
 						text = amount,
 						textXAlignment = Enum.TextXAlignment.Left,
 					}),
+
+					PerSecLabel = props.persecCounter and e(QiGranted),
 				}),
 			}),
 		})

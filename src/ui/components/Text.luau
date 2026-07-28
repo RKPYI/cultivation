@@ -11,6 +11,11 @@ type TextProps = {
 	pos: UDim2?,
 	textColor3: Color3?,
 	layoutOrder: number?,
+	visible: boolean?,
+	anchorPoint: Vector2?,
+
+	ref: React.Ref<TextLabel>?,
+	scaleRef: React.Ref<TextLabel>?,
 }
 
 local function Text(props: TextProps)
@@ -20,7 +25,11 @@ local function Text(props: TextProps)
 	local pos = props.pos or UDim2.fromOffset(0, 0)
 	local textColor3 = props.textColor3 or Color3.fromRGB(255, 255, 255)
 	local layoutOrder = props.layoutOrder or 0
+	local visible = if props.visible ~= nil then props.visible else true
+	local anchorPoint = props.anchorPoint or Vector2.new(0, 0)
 	return e("TextLabel", {
+		ref = props.ref,
+		AnchorPoint = anchorPoint,
 		BackgroundTransparency = 1,
 		TextScaled = true,
 		TextXAlignment = textXAlignment,
@@ -30,9 +39,13 @@ local function Text(props: TextProps)
 		Font = Enum.Font.GothamBlack,
 		Text = props.text,
 		LayoutOrder = layoutOrder,
+		Visible = visible,
 	}, {
 		UIStroke = e("UIStroke", {
 			Thickness = thickness,
+		}),
+		UIScale = e("UIScale", {
+			ref = props.scaleRef,
 		}),
 	})
 end
