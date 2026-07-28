@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local Data = require(ReplicatedStorage.Shared.Data).client
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local Text = require(ReplicatedStorage.UI.components.Text)
 
 local e = React.createElement
 
@@ -56,19 +57,9 @@ local function CounterItem(props: CounterProps)
 					Size = UDim2.fromScale(0.65, 0.6),
 					Position = UDim2.fromScale(0.35, 0.25),
 				}, {
-					Label = e("TextLabel", {
-						BackgroundTransparency = 1,
-						TextScaled = true,
-						TextColor3 = Color3.fromRGB(255, 255, 255),
-						Size = UDim2.fromScale(1, 1),
-						Font = Enum.Font.GothamBlack,
-						Text = amount,
-						-- Weight = Enum.FontWeight.Black,
-						TextXAlignment = Enum.TextXAlignment.Left,
-					}, {
-						UIStroke = e("UIStroke", {
-							Thickness = 2,
-						}),
+					Label = e(Text, {
+						text = amount,
+						textXAlignment = Enum.TextXAlignment.Left,
 					}),
 				}),
 			}),

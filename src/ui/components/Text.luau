@@ -5,6 +5,7 @@ local e = React.createElement
 
 type TextProps = {
 	text: string,
+	textXAlignment: Enum.TextXAlignment?,
 	thickness: number?,
 	size: UDim2?,
 	pos: UDim2?,
@@ -13,6 +14,7 @@ type TextProps = {
 }
 
 local function Text(props: TextProps)
+	local textXAlignment = props.textXAlignment or Enum.TextXAlignment.Center
 	local thickness = props.thickness or 2
 	local size = props.size or UDim2.fromScale(1, 1)
 	local pos = props.pos or UDim2.fromOffset(0, 0)
@@ -21,6 +23,7 @@ local function Text(props: TextProps)
 	return e("TextLabel", {
 		BackgroundTransparency = 1,
 		TextScaled = true,
+		TextXAlignment = textXAlignment,
 		TextColor3 = textColor3,
 		Size = size,
 		Position = pos,

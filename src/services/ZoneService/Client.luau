@@ -43,7 +43,7 @@ function ZoneServiceClient.setupAreaUI(self)
 		local qiUI = billboardGui.QiMul :: TextLabel
 
 		reqUI.Text = "Req: " .. req
-		qiUI.Text = "Qi: " .. qi .. "x [TEST]"
+		qiUI.Text = "Qi: " .. qi .. "x"
 
 		-- Particle
 		local particleEmitter = zone.ParticleEmitter :: ParticleEmitter
