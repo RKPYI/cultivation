@@ -5,12 +5,38 @@ local Roman = require(ReplicatedStorage.Shared.Roman)
 local Realm = {}
 
 Realm.Name = {
+	-- Reference: Top Tier Providence + Some Tweaks
 	"Qi Refining",
 	"Qi Condensation",
 	"Foundation Establishment",
 	"Golden Core",
 	"Nascent Soul",
 	"Soul Formation",
+	"Void Amalgamation",
+	"Body Integration",
+	"Tribulation Transcendence",
+	"Mahayana",
+
+	-- Upper World (Should have Crazy QI Increase/Need different type of qi like immortal qi and maybe could rebirth at this point for whatever reason)
+	"Loose Immortal",
+	"Earth Immortal",
+	"Heaven Immortal",
+	"True Immortal",
+	"Mystic Immortal",
+	"Golden Immortal",
+	"Immortal Emperor",
+
+	-- Upper World "Boss" (Should have crazy qi increase & Transitioning to Dao)
+	"Deity",
+	"Zenith Heaven",
+	"Quasi-Sage",
+
+	-- Chaotic Space (Qi Should'nt matter at this stage of the game, The Dao should be the main focus here)
+	"Heavenly Dao Sage",
+	"Freedom Primordial Chaos",
+	"Great Dao Primordial Chaos",
+	"Great Dao Supreme",
+	"Dao Creator",
 }
 
 function Realm.RealmName(realm: number): string
