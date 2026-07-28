@@ -24,6 +24,15 @@
             "RealmServiceUtils": {
               "$path": "src/services/RealmService/Utils.luau"
             }
+          },
+          "ZoneService": {
+            "$className": "Folder",
+            "ZoneServiceClient": {
+              "$path": "src/services/ZoneService/Client.luau"
+            },
+            "ZoneServiceUtils": {
+              "$path": "src/services/ZoneService/Utils.luau"
+            }
           }
         },
         "Classes": {

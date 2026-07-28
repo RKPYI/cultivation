@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
+local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
 type State = {
@@ -19,8 +20,8 @@ export type QiServiceServer = typeof(setmetatable({} :: State, { __index = {} })
 	OnPlayerRemoving: (self: QiServiceServer, player: Player) -> (),
 
 	-- Qi Functions
-	GiveQi: (self: QiServiceServer, player: Player) -> (),
-	GetTotalQiGiven: (player: Player) -> BigNum.BN,
+	GiveQi: (self: QiServiceServer, player: Player, zoneName: string) -> (),
+	GetTotalQiGiven: (player: Player, zoneName: string?) -> BigNum.BN,
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -67,7 +68,7 @@ end
 function QiServiceServer.start(self: QiServiceServer) end
 
 -- Qi Functions
-function QiServiceServer.GiveQi(self: QiServiceServer, player: Player)
+function QiServiceServer.GiveQi(self: QiServiceServer, player: Player, zoneName: string)
 	if not Data[player] then
 		return
 	end
@@ -81,7 +82,7 @@ function QiServiceServer.GiveQi(self: QiServiceServer, player: Player)
 	self.GiveQiCooldown[player] = currentTime
 
 	-- Giving Qi
-	local QiAmount = QiServiceServer.GetTotalQiGiven(player)
+	local QiAmount = QiServiceServer.GetTotalQiGiven(player, zoneName)
 
 	Data[player].qi(function(qi: BigNum.BN)
 		return BigNum.add(qi, QiAmount)
@@ -90,12 +91,18 @@ function QiServiceServer.GiveQi(self: QiServiceServer, player: Player)
 	local qi = Data[player].qi() :: BigNum.BN
 end
 
-function QiServiceServer.GetTotalQiGiven(player: Player): BigNum.BN
+function QiServiceServer.GetTotalQiGiven(player: Player, zoneName: string?): BigNum.BN
 	local BaseQi = BigNum.fromNumber(1)
 
 	local qiRealm = RealmServiceUtils.GetQiBonus(Data[player].realm())
 
+	local qiZone = 1
+	if zoneName and ZoneServiceUtils.Data[zoneName] then
+		qiZone = ZoneServiceUtils.Data[zoneName].qiMultiplier or 1
+	end
+
 	local TotalQiGiven = BigNum.mul(BaseQi, qiRealm)
+	TotalQiGiven = BigNum.mul(TotalQiGiven, qiZone)
 
 	return TotalQiGiven
 end
