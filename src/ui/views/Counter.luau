@@ -13,7 +13,7 @@ local e = React.createElement
 local function Counter(props: CounterProps)
 	return e("Frame", {
 		Size = UDim2.fromScale(0.12, 0.5),
-		Position = UDim2.fromScale(0, 0.1),
+		Position = UDim2.fromScale(0, 0),
 		BackgroundTransparency = 1,
 	}, {
 		UIListLayout = e("UIListLayout", {
