@@ -93,7 +93,7 @@ local function Breakthrough()
 		}),
 		qiText = e(Text, {
 			text = qiText,
-			pos = UDim2.new(0, 0, 0.5, 20),
+			pos = UDim2.fromScale(0, 1.1),
 		}),
 		BreakthroughButton = e("TextButton", {
 			BackgroundColor3 = Color3.fromRGB(255, 255, 0),

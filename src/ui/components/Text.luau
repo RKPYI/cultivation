@@ -13,6 +13,7 @@ type TextProps = {
 	layoutOrder: number?,
 	visible: boolean?,
 	anchorPoint: Vector2?,
+	zIndex: number?,
 
 	ref: React.Ref<TextLabel>?,
 	scaleRef: React.Ref<TextLabel>?,
@@ -27,6 +28,7 @@ local function Text(props: TextProps)
 	local layoutOrder = props.layoutOrder or 0
 	local visible = if props.visible ~= nil then props.visible else true
 	local anchorPoint = props.anchorPoint or Vector2.new(0, 0)
+	local zIndex = props.zIndex or 1
 	return e("TextLabel", {
 		ref = props.ref,
 		AnchorPoint = anchorPoint,
@@ -40,6 +42,7 @@ local function Text(props: TextProps)
 		Text = props.text,
 		LayoutOrder = layoutOrder,
 		Visible = visible,
+		ZIndex = zIndex,
 	}, {
 		UIStroke = e("UIStroke", {
 			Thickness = thickness,
