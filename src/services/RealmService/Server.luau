@@ -23,6 +23,7 @@ export type RealmServiceServer = typeof(setmetatable({} :: State, { __index = {}
 	Breakthrough: (self: RealmServiceServer, player: Player) -> (),
 	SetRealmState: (self: RealmServiceServer, player: Player) -> (),
 	GetRealmData: (self: RealmServiceServer, player: Player) -> { realmName: string, qiReq: BigNum.BN },
+	UpdateWalkspeed: (self: RealmServiceServer, player: Player) -> (),
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -56,9 +57,18 @@ function RealmServiceServer.init(self: RealmServiceServer)
 end
 
 function RealmServiceServer.OnPlayerAdded(self: RealmServiceServer, player: Player)
-	if Data[player] then
+	task.spawn(function()
+		while not Data[player] and player:IsDescendantOf(Players) do
+			task.wait(0.1)
+		end
+
+		if not player:IsDescendantOf(Players) then
+			return
+		end
+
 		self:SetRealmState(player)
-	end
+		self:UpdateWalkspeed(player)
+	end)
 end
 
 function RealmServiceServer.OnPlayerRemoving(self: RealmServiceServer, player: Player)
@@ -95,6 +105,42 @@ end
 function RealmServiceServer.GetRealmData(self, player)
 	local data = self.playerRealmData[player] :: { realmName: string, qiReq: BigNum.BN }
 	return data
+end
+
+-- SHOULD BE MOVED TO UserInputService or whatever more related to the humanoid
+local function recalculateSpeed(player: Player, realm: number)
+	local newWalkspeed = 16 + (realm / 2)
+	local newSprintspeed = newWalkspeed * 1.5
+
+	Data[player].walkspeed(newWalkspeed)
+	Data[player].sprintspeed(newSprintspeed)
+
+	if player.Character then
+		local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
+		if not humanoid then
+			return
+		end
+
+		humanoid.WalkSpeed = newWalkspeed
+		humanoid.JumpHeight = 7.2 + (realm / 10)
+	end
+end
+
+function RealmServiceServer.UpdateWalkspeed(self, player)
+	if not Data[player] then
+		return
+	end
+
+	-- Initializing
+	local currentRealm = Data[player].realm()
+	recalculateSpeed(player, currentRealm)
+
+	-- Listening to new realm
+	Data[player].realm.Changed(function(newRealm)
+		recalculateSpeed(player, newRealm)
+	end)
+
+	print("Walkspeed Upated: " .. Data[player].walkspeed())
 end
 
 return RealmServiceServer

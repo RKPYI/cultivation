@@ -2,6 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
+local Data = require(ReplicatedStorage.Shared.Data).client
+
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid") :: Humanoid
@@ -13,7 +15,7 @@ LocalPlayer.CharacterAdded:Connect(function(newChar)
 end)
 
 local DEFAULT_SPEED = 16
-local SPRINT_SPEED = 25
+local SPRINT_SPEED = 24
 
 local UserInputServiceClient = {}
 
@@ -29,13 +31,13 @@ function UserInputServiceClient.Sprint(self)
 		end
 
 		if input.KeyCode == Enum.KeyCode.LeftShift then
-			Humanoid.WalkSpeed = SPRINT_SPEED
+			Humanoid.WalkSpeed = Data.sprintspeed() or SPRINT_SPEED
 		end
 	end)
 
-	UserInputService.InputEnded:Connect(function(input, gameProcessed)
+	UserInputService.InputEnded:Connect(function(input)
 		if input.KeyCode == Enum.KeyCode.LeftShift then
-			Humanoid.WalkSpeed = DEFAULT_SPEED
+			Humanoid.WalkSpeed = Data.walkspeed() or DEFAULT_SPEED
 		end
 	end)
 end
