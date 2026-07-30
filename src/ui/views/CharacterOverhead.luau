@@ -42,9 +42,7 @@ local function CharacterOverhead(props: CharProps)
 			setRealmName(newRealmName)
 		end)
 
-		return function()
-			conn:Disconnect()
-		end
+		return conn
 	end, {})
 
 	return e("BillboardGui", {

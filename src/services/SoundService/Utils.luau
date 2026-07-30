@@ -1,4 +1,8 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local SoundService = game:GetService("SoundService")
+
+local Data = require(ReplicatedStorage.Shared.Data).client
 local Sound = {}
 
 local clickSfx = SoundService:WaitForChild("uiClick") :: Sound
@@ -6,6 +10,10 @@ local hoverSfx = SoundService:WaitForChild("uiClickHover") :: Sound
 
 function Sound.play(sound: Sound?)
 	if not sound then
+		return
+	end
+
+	if not Data.settings.sfx() then
 		return
 	end
 

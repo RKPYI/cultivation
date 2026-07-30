@@ -48,8 +48,8 @@ local function Breakthrough()
 		end)
 
 		return function()
-			qiConn:Disconnect()
-			realmConn:Disconnect()
+			qiConn()
+			realmConn()
 		end
 	end, {})
 

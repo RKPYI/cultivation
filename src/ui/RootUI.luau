@@ -5,6 +5,7 @@ local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
+local Settings = require(ReplicatedStorage.UI.views.Settings)
 
 local e = React.createElement
 
@@ -26,6 +27,14 @@ local function RootUI()
 		setActiveModal(nil)
 	end, {})
 
+	local function renderModalContent()
+		if activeModal == "Settings" then
+			return e(Settings)
+		end
+
+		return nil
+	end
+
 	return e(React.Fragment, nil, {
 		qiCounter = e(Counter, {
 			currency = "qi",
@@ -39,6 +48,7 @@ local function RootUI()
 		Modal = activeModal ~= nil and e(Modal, {
 			text = activeModal,
 			onClose = handleClose,
+			children = renderModalContent(),
 		}),
 	})
 end

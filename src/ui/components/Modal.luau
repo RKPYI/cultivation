@@ -68,9 +68,14 @@ local function Modal(props: ModalProps)
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 1),
 			Image = "rbxassetid://138496797110912",
+			Active = false,
 		}),
 
-		Content = props.children,
+		Content = e("Frame", {
+			BackgroundTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			ZIndex = 11,
+		}, { Child = props.children }),
 	})
 end
 

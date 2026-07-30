@@ -38,9 +38,7 @@ local function CounterItem(props: CounterProps)
 			setAmount(newAmountFormatted)
 		end)
 
-		return function()
-			conn:Disconnect()
-		end
+		return conn
 	end, {})
 
 	if props.image then

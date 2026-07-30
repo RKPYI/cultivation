@@ -25,8 +25,17 @@
               "$path": "src/services/RealmService/Utils.luau"
             }
           },
+          "SettingService": {
+            "$className": "Folder",
+            "SettingServiceClient": {
+              "$path": "src/services/SettingService/Client.luau"
+            }
+          },
           "SoundService": {
             "$className": "Folder",
+            "SoundServiceClient": {
+              "$path": "src/services/SoundService/Client.luau"
+            },
             "SoundServiceUtils": {
               "$path": "src/services/SoundService/Utils.luau"
             }
@@ -80,6 +89,12 @@
           "$className": "Folder",
           "RealmServiceServer": {
             "$path": "src/services/RealmService/Server.luau"
+          }
+        },
+        "SettingService": {
+          "$className": "Folder",
+          "SettingServiceServer": {
+            "$path": "src/services/SettingService/Server.luau"
           }
         },
         "UIService": {
