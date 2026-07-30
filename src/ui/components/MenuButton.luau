@@ -1,9 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
-local TweenService = game:GetService("TweenService")
 
 local React = require(ReplicatedStorage.Packages.React)
 local Text = require(ReplicatedStorage.UI.components.Text)
+local useAnimatedButton = require(ReplicatedStorage.UI.hooks.useAnimatedButton)
 local e = React.createElement
 
 type buttonProps = {
@@ -14,74 +13,28 @@ type buttonProps = {
 	onClick: (() -> ())?,
 }
 
-local clickSfx = SoundService:WaitForChild("uiClick") :: Sound
-local hoverSfx = SoundService:WaitForChild("uiClickHover") :: Sound
-
--- Helper so multiple sound can be played at once
-local function PlaySound(sound: Sound)
-	if not sound then
-		return
-	end
-
-	local soundClone = sound:Clone()
-	soundClone.Parent = SoundService
-	soundClone:Play()
-	soundClone.Ended:Once(function()
-		soundClone:Destroy()
-	end)
-end
-
--- local TweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-local popInInfo = TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-local popOutInfo = TweenInfo.new(0.24, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
 local function MenuButton(props: buttonProps)
-	local scaleRef = React.useRef(nil)
-
+	-- local scaleRef = React.useRef(nil)
 	local iconImage = props.iconImage or "rbxassetid://102114906009290"
 	local layoutOrder = props.layoutOrder or 0
 
-	local function animateScale(targetScale: number, tweenInfo: TweenInfo)
-		local ScaleInstance = scaleRef.current
-		if ScaleInstance then
-			local tween = TweenService:Create(ScaleInstance, tweenInfo, { Scale = targetScale })
-			tween:Play()
-		end
-	end
+	local buttonAnim = useAnimatedButton({
+		hoverScale = 1.1,
+		pressScale = 0.95,
+		onClick = props.onClick,
+	})
 
-	local OnMouseEnter = React.useCallback(function()
-		animateScale(1.1, popInInfo)
-		PlaySound(hoverSfx)
-	end, {})
-
-	local OnMouseLeave = React.useCallback(function()
-		animateScale(1, popInInfo)
-	end, {})
-
-	local OnMouseDown = React.useCallback(function()
-		animateScale(0.95, popOutInfo)
-	end, {})
-
-	local OnActivated = React.useCallback(function()
-		animateScale(1.1, popOutInfo)
-
-		if props.onClick then
-			props.onClick()
-		end
-
-		PlaySound(clickSfx)
-	end, { props.onClick })
-
-	return e("ImageButton", {
+	local buttonProps = {
 		BackgroundTransparency = 1,
 		LayoutOrder = layoutOrder,
 		Size = UDim2.fromScale(0.35, 0.35),
 		Image = "rbxassetid://89760829760036",
-		[React.Event.MouseEnter] = OnMouseEnter,
-		[React.Event.MouseLeave] = OnMouseLeave,
-		[React.Event.MouseButton1Down] = OnMouseDown,
-		[React.Event.Activated] = OnActivated,
-	}, {
+	}
+	for key, value in buttonAnim.events do
+		buttonProps[key] = value
+	end
+
+	return e("ImageButton", buttonProps, {
 		UIAspectRatioConstraint = e("UIAspectRatioConstraint"),
 		UIPadding = e("UIPadding", {
 			PaddingBottom = UDim.new(0.1, 0),
@@ -90,7 +43,7 @@ local function MenuButton(props: buttonProps)
 			PaddingTop = UDim.new(0.1, 0),
 		}),
 		UIScale = e("UIScale", {
-			ref = scaleRef,
+			ref = buttonAnim.ref,
 		}),
 		IconImage = e("ImageLabel", {
 			BackgroundTransparency = 1,

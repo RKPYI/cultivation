@@ -25,6 +25,12 @@
               "$path": "src/services/RealmService/Utils.luau"
             }
           },
+          "SoundService": {
+            "$className": "Folder",
+            "SoundServiceUtils": {
+              "$path": "src/services/SoundService/Utils.luau"
+            }
+          },
           "ZoneService": {
             "$className": "Folder",
             "ZoneServiceClient": {
