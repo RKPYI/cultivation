@@ -21,16 +21,16 @@ return function()
 	local app = React.createElement(RootUI)
 	root:render(app)
 
-	local head = player.Character:WaitForChild("Head", 10)
-	local overheadFolder = Instance.new("Folder")
-	overheadFolder.Name = "o_Folder"
-	overheadFolder.Parent = head
-	local o_root = ReactRoblox.createRoot(overheadFolder)
-	local o_app = React.createElement(CharacterOverhead, {
-		player = player,
-		adornee = head,
-	})
-	o_root:render(o_app)
+	-- local head = player.Character:WaitForChild("Head", 10)
+	-- local overheadFolder = Instance.new("Folder")
+	-- overheadFolder.Name = "o_Folder"
+	-- overheadFolder.Parent = head
+	-- local o_root = ReactRoblox.createRoot(overheadFolder)
+	-- local o_app = React.createElement(CharacterOverhead, {
+	-- 	player = player,
+	-- 	adornee = head,
+	-- })
+	-- o_root:render(o_app)
 end
 
 -- PLS HELP

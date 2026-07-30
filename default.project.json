@@ -85,6 +85,12 @@
       },
       "Services": {
         "$className": "Folder",
+        "OverheadService": {
+          "$className": "Folder",
+          "OverheadServiceServer": {
+            "$path": "src/services/OverheadService/Server.luau"
+          }
+        },
         "QiService": {
           "$className": "Folder",
           "QiServiceServer": {

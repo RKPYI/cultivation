@@ -2,6 +2,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local OverheadServiceServer = require(ServerScriptService.Services.OverheadService.OverheadServiceServer)
 local QiServiceServer = require(ServerScriptService.Services.QiService.QiServiceServer)
 local RealmServiceServer = require(ServerScriptService.Services.RealmService.RealmServiceServer)
 local SettingServiceServer = require(ServerScriptService.Services.SettingService.SettingServiceServer)
@@ -10,5 +11,6 @@ local Data = require(ReplicatedStorage.Shared.Data).server
 
 QiServiceServer:init()
 RealmServiceServer:init()
+OverheadServiceServer:init()
 UIServiceServer:init()
 SettingServiceServer:init()
