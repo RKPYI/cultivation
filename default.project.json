@@ -40,6 +40,12 @@
               "$path": "src/services/SoundService/Utils.luau"
             }
           },
+          "UserInputService": {
+            "$className": "Folder",
+            "UserInputServiceClient": {
+              "$path": "src/services/UserInputService/Client.luau"
+            }
+          },
           "ZoneService": {
             "$className": "Folder",
             "ZoneServiceClient": {

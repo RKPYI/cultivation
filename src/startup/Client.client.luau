@@ -6,6 +6,7 @@ local QiServiceClient = require(ReplicatedStorage.Shared.Services.QiService.QiSe
 local RealmServiceClient = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceClient)
 local SettingServiceClient = require(ReplicatedStorage.Shared.Services.SettingService.SettingServiceClient)
 local SoundServiceClient = require(ReplicatedStorage.Shared.Services.SoundService.SoundServiceClient)
+local UserInputServiceClient = require(ReplicatedStorage.Shared.Services.UserInputService.UserInputServiceClient)
 local ZoneServiceClient = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceClient)
 
 local Data = require(ReplicatedStorage.Shared.Data).client
@@ -15,6 +16,7 @@ RealmServiceClient:init()
 ZoneServiceClient:init()
 SettingServiceClient:init()
 SoundServiceClient:init()
+UserInputServiceClient:init()
 
 MountUI()
 
