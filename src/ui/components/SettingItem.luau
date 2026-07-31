@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local SettingServiceClient = require(ReplicatedStorage.Shared.Services.SettingService.SettingServiceClient)
+local SoundServiceUtils = require(ReplicatedStorage.Shared.Services.SoundService.SoundServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).client
 local Text = require(ReplicatedStorage.UI.components.Text)
 local e = React.createElement
@@ -25,6 +26,7 @@ local function SettingItem(props)
 
 	local function toggleSetting()
 		SettingServiceClient:toggleSetting(settingName)
+		SoundServiceUtils.playClick()
 	end
 
 	local function updateState(bool: boolean)
@@ -66,6 +68,9 @@ local function SettingItem(props)
 			Text = textBtn,
 			TextColor3 = Color3.fromRGB(255, 255, 255),
 			TextScaled = true,
+			[React.Event.MouseEnter] = function()
+				SoundServiceUtils.playHover()
+			end,
 			[React.Event.Activated] = toggleSetting,
 		}, {
 			UICorner = e("UICorner", {
