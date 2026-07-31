@@ -4,6 +4,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
+local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
 
@@ -30,6 +31,10 @@ local function RootUI()
 	local function renderModalContent()
 		if activeModal == "Settings" then
 			return e(Settings)
+		end
+
+		if activeModal == "Inventory" then
+			return e(Inventory)
 		end
 
 		return nil

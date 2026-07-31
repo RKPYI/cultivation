@@ -7,6 +7,15 @@
         "$className": "Folder",
         "Services": {
           "$className": "Folder",
+          "ItemService": {
+            "$className": "Folder",
+            "ItemServiceClient": {
+              "$path": "src/services/ItemService/Client.luau"
+            },
+            "ItemServiceUtils": {
+              "$path": "src/services/ItemService/Utils.luau"
+            }
+          },
           "QiService": {
             "$className": "Folder",
             "QiServiceClient": {
@@ -85,6 +94,12 @@
       },
       "Services": {
         "$className": "Folder",
+        "ItemService": {
+          "$className": "Folder",
+          "ItemServiceServer": {
+            "$path": "src/services/ItemService/Server.luau"
+          }
+        },
         "OverheadService": {
           "$className": "Folder",
           "OverheadServiceServer": {

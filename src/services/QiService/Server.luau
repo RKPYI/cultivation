@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
@@ -105,8 +106,23 @@ function QiServiceServer.GetTotalQiGiven(self: QiServiceServer, player: Player, 
 		end
 	end
 
+	local itemMul = 1
+	if Data[player].inventory.itemEquipped() ~= "" then
+		local item = Data[player].inventory.itemEquipped()
+		local itemData = ItemServiceUtils.Data[item]
+
+		-- Check if item data exist
+		if itemData then
+			-- Add if player realm is higher than the requirement
+			if Data[player].realm() >= itemData.realmReq then
+				itemMul = itemData.qiMultiplier
+			end
+		end
+	end
+
 	local TotalQiGiven = BigNum.mul(BaseQi, qiRealm)
 	TotalQiGiven = BigNum.mul(TotalQiGiven, qiZone)
+	TotalQiGiven = BigNum.mul(TotalQiGiven, itemMul)
 
 	return TotalQiGiven
 end

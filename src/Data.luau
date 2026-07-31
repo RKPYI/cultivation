@@ -12,6 +12,17 @@ local template = {
 		music = true,
 		sfx = true,
 	},
+
+	inventory = {
+		item = {
+			"book1",
+			"book2",
+			"book3",
+			"book4",
+			"book5",
+		},
+		itemEquipped = "",
+	},
 }
 
 return DataServiceTyped({
