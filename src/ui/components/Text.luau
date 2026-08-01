@@ -14,6 +14,7 @@ type TextProps = {
 	visible: boolean?,
 	anchorPoint: Vector2?,
 	zIndex: number?,
+	textSize: number?,
 
 	ref: React.Ref<TextLabel>?,
 	scaleRef: React.Ref<TextLabel>?,
@@ -33,7 +34,8 @@ local function Text(props: TextProps)
 		ref = props.ref,
 		AnchorPoint = anchorPoint,
 		BackgroundTransparency = 1,
-		TextScaled = true,
+		TextScaled = if props.textSize then false else true,
+		TextSize = props.textSize,
 		TextXAlignment = textXAlignment,
 		TextColor3 = textColor3,
 		Size = size,
