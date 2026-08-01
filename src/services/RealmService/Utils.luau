@@ -58,12 +58,20 @@ local function getBigRealm(realm: number)
 end
 
 function Realm.CalculateBreakthroughReq(realm: number): BigNum.BN
-	local baseQi = 2 ^ realm * 10
+	local baseQi = 2 ^ realm * 100
 	local bigRealm = getBigRealm(realm)
 
 	local bigRealmQi = BigNum.pow10(BigNum.fromNumber(bigRealm)) -- Multiply by 10 every major realm
 	local totalReq = BigNum.mul(BigNum.fromNumber(baseQi), bigRealmQi)
 	totalReq = BigNum.mul(totalReq, BigNum.pow(BigNum.fromNumber(2), bigRealm))
+
+	if realm > 100 then
+		local immortalOffset = realm - 100
+
+		local immortalFactor = BigNum.pow(BigNum.fromNumber(2), immortalOffset)
+
+		totalReq = BigNum.mul(totalReq, immortalFactor)
+	end
 
 	return totalReq
 end
