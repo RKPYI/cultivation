@@ -7,6 +7,7 @@ local Sound = {}
 
 local clickSfx = SoundService:WaitForChild("uiClick") :: Sound
 local hoverSfx = SoundService:WaitForChild("uiClickHover") :: Sound
+local BreakthroughSfx = SoundService:WaitForChild("breakthroughsfx") :: Sound
 
 function Sound.play(sound: Sound?)
 	if not sound then
@@ -31,6 +32,10 @@ end
 
 function Sound.playHover()
 	Sound.play(hoverSfx)
+end
+
+function Sound.playBreakthrough()
+	Sound.play(BreakthroughSfx)
 end
 
 return Sound
