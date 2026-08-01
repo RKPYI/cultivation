@@ -34,6 +34,7 @@ function ZoneServiceClient.setupAreaUI(self)
 		end
 
 		-- Data
+		local playerRealm = Data.realm()
 		local data = ZoneServiceUtils.Data
 		local req = RealmServiceUtils.RealmName(data[area.Name].realmReq)
 		local qi = data[area.Name].qiMultiplier
@@ -41,6 +42,12 @@ function ZoneServiceClient.setupAreaUI(self)
 		-- The UI
 		local reqUI = billboardGui.RealmReq :: TextLabel
 		local qiUI = billboardGui.QiMul :: TextLabel
+
+		if playerRealm >= data[area.Name].realmReq then
+			reqUI.TextColor3 = Color3.fromRGB(255, 255, 255)
+		else
+			reqUI.TextColor3 = Color3.fromRGB(255, 107, 109)
+		end
 
 		reqUI.Text = "Req: " .. req
 		qiUI.Text = "Qi: " .. qi .. "x"
@@ -59,10 +66,10 @@ function ZoneServiceClient.setupAreaListener(self)
 			continue
 		end
 
+		local realmReq = ZoneServiceUtils.Data[zone.Parent.Name].realmReq
+
 		ZoneServiceUtils.CalculateDist(zone, function(isInside)
 			isTouching[zone.Parent.Name] = isInside
-
-			local realmReq = ZoneServiceUtils.Data[zone.Parent.Name].realmReq
 
 			if isInside then
 				task.spawn(function()
@@ -73,6 +80,14 @@ function ZoneServiceClient.setupAreaListener(self)
 				end)
 			end
 		end)
+
+		Data.realm.Changed(function(newRealm)
+			if newRealm >= realmReq then
+				zone.BillboardGui.RealmReq.TextColor3 = Color3.fromRGB(255, 255, 255)
+			else
+				zone.BillboardGui.RealmReq.TextColor3 = Color3.fromRGB(255, 107, 109)
+			end
+		end, {})
 	end
 end
 
