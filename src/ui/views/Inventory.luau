@@ -59,6 +59,7 @@ local function Inventory(props)
 
 		if itemData then
 			local isItemEquipped = (itemName == equippedItem)
+			local realmMet = playerRealm >= itemData.realmReq
 
 			local layoutOrder = if isItemEquipped then 1 else (1 + i)
 
@@ -68,6 +69,7 @@ local function Inventory(props)
 				icon = itemData.image,
 				isSelected = (selectedItem == itemName),
 				isEquipped = isItemEquipped,
+				meetsRealmReq = realmMet,
 				layoutOrder = layoutOrder,
 				onClick = function()
 					-- If same item clicked twice, it gets closed
@@ -120,7 +122,7 @@ local function Inventory(props)
 			BackgroundColor3 = Color3.fromRGB(255, 203, 129),
 			Position = UDim2.fromScale(1.16, 0.5),
 			Size = UDim2.fromScale(0.3, 0.85),
-			Visible = (selectedItem ~= nil and activeItemData ~= nil), -- NEED TO HAVE A TOGGLE FOR THIS
+			Visible = (selectedItem ~= nil and activeItemData ~= nil),
 		}, {
 			UICorner = e("UICorner", {
 				CornerRadius = UDim.new(0.1, 0),
@@ -133,7 +135,10 @@ local function Inventory(props)
 			-- Display Icon
 			ItemIcon = e("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.fromRGB(0, 0, 255),
+				BackgroundColor3 = if isEquipped
+					then Color3.fromRGB(0, 255, 0)
+					elseif meetsRealmReq then Color3.fromRGB(0, 0, 255)
+					else Color3.fromRGB(255, 0, 0),
 				BackgroundTransparency = 0.5,
 				Position = UDim2.fromScale(0.5, 0.25),
 				Size = UDim2.fromScale(0.5, 0.5),
@@ -183,7 +188,7 @@ local function Inventory(props)
 				ReqRealm = e(Text, {
 					text = "Req: "
 						.. (activeItemData and RealmServiceUtils.RealmName(activeItemData.realmReq) or "None"),
-					textColor3 = if meetsRealmReq then Color3.fromRGB(130, 200, 255) else Color3.fromRGB(255, 107, 109), -- Maybe change to light blue if user realm is higher (can equip)
+					textColor3 = if meetsRealmReq then Color3.fromRGB(130, 200, 255) else Color3.fromRGB(255, 107, 109),
 					size = UDim2.fromScale(1, 0.3),
 					layoutOrder = 1,
 				}),

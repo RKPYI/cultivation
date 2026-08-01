@@ -8,6 +8,7 @@ type ItemButtonProps = {
 	name: string,
 	isSelected: boolean,
 	isEquipped: boolean,
+	meetsRealmReq: boolean,
 	layoutOrder: number,
 
 	onClick: () -> (),
@@ -16,7 +17,10 @@ type ItemButtonProps = {
 local function ItemButton(props: ItemButtonProps)
 	local icon = props.icon or "rbxassetid://80557352288392"
 	return e("Frame", {
-		BackgroundColor3 = Color3.fromRGB(0, 0, 255), -- Could be Changed according to item Rarity
+		BackgroundColor3 = if props.isEquipped
+			then Color3.fromRGB(0, 255, 0)
+			elseif props.meetsRealmReq then Color3.fromRGB(0, 0, 255)
+			else Color3.fromRGB(255, 0, 0),
 		BackgroundTransparency = 0.5,
 		Size = UDim2.fromScale(0.08, 1),
 		LayoutOrder = props.layoutOrder,
