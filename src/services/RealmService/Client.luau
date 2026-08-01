@@ -3,8 +3,12 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 
+local React = require(ReplicatedStorage.Packages.React)
+local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local SoundServiceUtils = require(ReplicatedStorage.Shared.Services.SoundService.SoundServiceUtils)
+local RealmLabel = require(ReplicatedStorage.UI.components.RealmLabel)
 local Networker = require(ReplicatedStorage.Packages.Networker).client
 local Data = require(ReplicatedStorage.Shared.Data).client
 local Player = Players.LocalPlayer
@@ -43,6 +47,35 @@ function RealmServiceClient.start(self, player: Player)
 	Data.realm.Changed(function()
 		SoundServiceUtils.playBreakthrough()
 	end)
+
+	self:initRealmBoard()
+end
+
+function RealmServiceClient.initRealmBoard(self)
+	local Realms = RealmServiceUtils.Name
+	local Board = workspace
+		:FindFirstChild("RealmList")
+		:FindFirstChild("Board")
+		:FindFirstChild("SurfaceGui")
+		:FindFirstChild("ScrollingFrame")
+	local root = ReactRoblox.createRoot(Board)
+
+	local children = {}
+	local realmLevel = 1
+	for _, realmName in Realms do
+		children["Realm_" .. realmLevel] = React.createElement(RealmLabel, {
+			realmName = realmName,
+			lvlStart = realmLevel,
+		})
+
+		realmLevel = realmLevel + 10
+	end
+
+	children["UIListLayout"] = React.createElement("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder })
+	children["UIPadding"] =
+		React.createElement("UIPadding", { PaddingRight = UDim.new(0.05, 0), PaddingLeft = UDim.new(0.05, 0) })
+
+	root:render(React.createElement(React.Fragment, nil, children))
 end
 
 return RealmServiceClient
