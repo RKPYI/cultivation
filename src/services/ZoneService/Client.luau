@@ -111,9 +111,10 @@ function ZoneServiceClient.setupAreaListener(self)
 		local realmReq = ZoneServiceUtils.Data[zone.Parent.Name].realmReq
 
 		ZoneServiceUtils.CalculateDist(zone, function(isInside)
+			local wasTouching = isTouching[area.Name]
 			isTouching[zone.Parent.Name] = isInside
 
-			if isInside then
+			if isInside and not wasTouching then
 				task.spawn(function()
 					while isTouching[zone.Parent.Name] and Data.realm() >= realmReq do
 						self:GiveQi(area.Name)
