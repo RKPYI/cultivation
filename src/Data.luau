@@ -27,4 +27,5 @@ local template = {
 
 return DataServiceTyped({
 	template = template,
+	useMock = true,
 })

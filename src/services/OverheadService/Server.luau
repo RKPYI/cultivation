@@ -92,6 +92,12 @@ function OverheadServiceServer.OnCharacterAdded(self: OverheadServiceServer, pla
 			RealmLabel.Text = RealmServiceUtils.RealmName(realm)
 		end
 
+		local isTestMode = Data.Service.options.useMock :: boolean
+		if isTestMode then
+			local TestLabel = overhead:FindFirstChild("TestMode") :: TextLabel
+			TestLabel.Visible = true
+		end
+
 		-- Initial Display
 		updateRealmDisplay(Data[player].realm())
 

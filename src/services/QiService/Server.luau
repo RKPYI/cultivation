@@ -124,6 +124,12 @@ function QiServiceServer.GetTotalQiGiven(self: QiServiceServer, player: Player, 
 	TotalQiGiven = BigNum.mul(TotalQiGiven, qiZone)
 	TotalQiGiven = BigNum.mul(TotalQiGiven, itemMul)
 
+	-- #TESTMODE
+	if Data.Service.options.useMock then
+		print(Data)
+		TotalQiGiven = BigNum.mul(TotalQiGiven, BigNum.fromNumber(1e6))
+	end
+
 	return TotalQiGiven
 end
 
