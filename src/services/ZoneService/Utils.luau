@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local Zone = {}
 
 export type ZoneInfo = {
@@ -40,16 +41,28 @@ Zone.Data = {
 	},
 } :: { [string]: ZoneInfo }
 
-function Zone.CalculateDist(zone: Part, callback: (boolean) -> ())
+function Zone.CalculateDist(zone: Part, callback: (player: Player, isInside: boolean) -> ())
 	zone.Touched:Connect(function(hit)
-		if game.Players:GetPlayerFromCharacter(hit.Parent) then
-			callback(true)
+		local character = hit.Parent
+		if not character then
+			return
+		end
+
+		local player = Players:GetPlayerFromCharacter(character)
+		if player then
+			callback(player, true)
 		end
 	end)
 
 	zone.TouchEnded:Connect(function(hit)
-		if game.Players:GetPlayerFromCharacter(hit.Parent) then
-			callback(false)
+		local character = hit.Parent
+		if not character then
+			return
+		end
+
+		local player = Players:GetPlayerFromCharacter(character)
+		if player then
+			callback(player, false)
 		end
 	end)
 end

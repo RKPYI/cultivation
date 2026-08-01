@@ -110,20 +110,6 @@ function ZoneServiceClient.setupAreaListener(self)
 
 		local realmReq = ZoneServiceUtils.Data[zone.Parent.Name].realmReq
 
-		ZoneServiceUtils.CalculateDist(zone, function(isInside)
-			local wasTouching = isTouching[area.Name]
-			isTouching[zone.Parent.Name] = isInside
-
-			if isInside and not wasTouching then
-				task.spawn(function()
-					while isTouching[zone.Parent.Name] and Data.realm() >= realmReq do
-						self:GiveQi(area.Name)
-						task.wait(1)
-					end
-				end)
-			end
-		end)
-
 		Data.realm.Changed(function(newRealm)
 			if newRealm >= realmReq then
 				zone.BillboardGui.RealmReq.TextColor3 = Color3.fromRGB(255, 255, 255)

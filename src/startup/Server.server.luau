@@ -8,11 +8,16 @@ local QiServiceServer = require(ServerScriptService.Services.QiService.QiService
 local RealmServiceServer = require(ServerScriptService.Services.RealmService.RealmServiceServer)
 local SettingServiceServer = require(ServerScriptService.Services.SettingService.SettingServiceServer)
 local UIServiceServer = require(ServerScriptService.Services.UIService.UIServiceServer)
+local ZoneServiceServer = require(ServerScriptService.Services.ZoneService.ZoneServiceServer)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
 QiServiceServer:init()
 RealmServiceServer:init()
+ZoneServiceServer:init()
 ItemServiceServer:init()
 OverheadServiceServer:init()
 UIServiceServer:init()
 SettingServiceServer:init()
+
+ZoneServiceServer:start()
+QiServiceServer:start()

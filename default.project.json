@@ -129,6 +129,12 @@
           "UIServiceServer": {
             "$path": "src/services/UIService/Server.luau"
           }
+        },
+        "ZoneService": {
+          "$className": "Folder",
+          "ZoneServiceServer": {
+            "$path": "src/services/ZoneService/Server.luau"
+          }
         }
       },
       "Classes": {
