@@ -122,7 +122,12 @@ local function recalculateSpeed(player: Player, realm: number)
 		end
 
 		humanoid.WalkSpeed = newWalkspeed
-		humanoid.JumpHeight = 7.2 + (realm / 10)
+
+		local baseJumpHeight = 7.2
+		if realm > 100 then
+			baseJumpHeight = baseJumpHeight * ((realm - 100) + 1)
+		end
+		humanoid.JumpHeight = baseJumpHeight + (realm / 10)
 	end
 end
 

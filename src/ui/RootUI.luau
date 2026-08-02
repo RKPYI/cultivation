@@ -1,9 +1,12 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local NPCServiceClient = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceClient)
+local QuestServiceClient = require(ReplicatedStorage.Shared.Services.QuestService.QuestServiceClient)
 local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
+local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
@@ -40,6 +43,19 @@ local function RootUI()
 		return nil
 	end
 
+	local activeNPC, setActiveNPC = React.useState(nil :: string?)
+
+	React.useEffect(function()
+		local conn = NPCServiceClient.OnNPCTriggered:Connect(function(npcId: string?)
+			print("UseEffect OnNPCTriggered Fired.")
+			setActiveNPC(npcId)
+		end)
+
+		return function()
+			conn:Disconnect()
+		end
+	end, {})
+
 	return e(React.Fragment, nil, {
 		qiCounter = e(Counter, {
 			currency = "qi",
@@ -55,11 +71,19 @@ local function RootUI()
 			onClose = handleClose,
 			children = renderModalContent(),
 		}),
+
+		DialogueModal = activeNPC ~= nil and e(Dialogue, {
+			npcId = activeNPC,
+			onClose = function()
+				setActiveNPC(nil)
+			end,
+			onAction = function(action: string, param: string?)
+				if action == "AcceptQuest" and param then
+					QuestServiceClient:AcceptQuest(param)
+				end
+			end,
+		}),
 	})
 end
 
 return RootUI
-
--- 1:1 Image = rbxassetid://89760829760036
--- Shop Icon = rbxassetid://17368217589
--- rbxassetid://102114906009290

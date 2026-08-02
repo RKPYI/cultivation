@@ -16,6 +16,15 @@
               "$path": "src/services/ItemService/Utils.luau"
             }
           },
+          "NPCService": {
+            "$className": "Folder",
+            "NPCServiceClient": {
+              "$path": "src/services/NPCService/Client.luau"
+            },
+            "NPCServiceUtils": {
+              "$path": "src/services/NPCService/Utils.luau"
+            }
+          },
           "QiService": {
             "$className": "Folder",
             "QiServiceClient": {
@@ -23,6 +32,15 @@
             },
             "QiServiceUtils": {
               "$path": "src/services/QiService/Utils.luau"
+            }
+          },
+          "QuestService": {
+            "$className": "Folder",
+            "QuestServiceClient": {
+              "$path": "src/services/QuestService/Client.luau"
+            },
+            "QuestServiceUtils": {
+              "$path": "src/services/QuestService/Utils.luau"
             }
           },
           "RealmService": {
@@ -110,6 +128,12 @@
           "$className": "Folder",
           "QiServiceServer": {
             "$path": "src/services/QiService/Server.luau"
+          }
+        },
+        "QuestService": {
+          "$className": "Folder",
+          "QuestServiceServer": {
+            "$path": "src/services/QuestService/Server.luau"
           }
         },
         "RealmService": {
