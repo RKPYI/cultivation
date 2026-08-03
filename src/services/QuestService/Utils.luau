@@ -1,3 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BigNum = require(ReplicatedStorage.Shared.BigNum)
 export type QuestType = "ReachRealm" | "KillMob" | "GatherHerb"
 
 export type QuestConfig = {
@@ -8,8 +11,8 @@ export type QuestConfig = {
 	targetValue: number | string, -- ID / Realm Level
 	targetAmount: number, -- How much mob/herb/realm level to finish the quests
 	rewards: {
-		spiritualStones: number,
-		qiBonus: number?,
+		spiritualStones: BigNum.BN,
+		qiBonus: number?, -- NOT IMPLEMENTED YET
 		-- Add more here idk what else though
 	},
 }
@@ -27,7 +30,7 @@ QuestServiceUtils.Data = {
 		targetValue = 11,
 		targetAmount = 11, -- Always same value for both target value and amount for ReachRealm questType
 		rewards = {
-			spiritualStones = 200,
+			spiritualStones = BigNum.fromNumber(200),
 		},
 	},
 

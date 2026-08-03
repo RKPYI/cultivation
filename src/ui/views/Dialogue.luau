@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local Data = require(ReplicatedStorage.Shared.Data).client
 local NPCServiceUtils = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceUtils)
 local DialogueOptions = require(ReplicatedStorage.UI.components.DialogueOptions)
 local Text = require(ReplicatedStorage.UI.components.Text)
@@ -14,7 +15,16 @@ type DialogueProps = {
 
 local function Dialogue(props: DialogueProps)
 	local npcData = NPCServiceUtils.Data[props.npcId] :: NPCServiceUtils.NPCConfig
-	local currentNodeId, setCurrentNodeId = React.useState(npcData.initialNode or "")
+
+	local playerQuests = Data.quests()
+	local initialNode = ""
+	if type(npcData.initialNode) == "function" then
+		initialNode = npcData.initialNode(playerQuests)
+	else
+		initialNode = npcData.initialNode
+	end
+
+	local currentNodeId, setCurrentNodeId = React.useState(initialNode or "")
 
 	if not npcData then
 		return nil

@@ -81,6 +81,9 @@ local function RootUI()
 				if action == "AcceptQuest" and param then
 					QuestServiceClient:AcceptQuest(param)
 				end
+				if action == "CompleteQuest" and param then
+					QuestServiceClient:CompleteQuest(param)
+				end
 			end,
 		}),
 	})

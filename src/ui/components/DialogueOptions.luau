@@ -14,6 +14,18 @@ type OptionProps = {
 local function DialogueOptions(props: OptionProps)
 	local currentNode = props.currentNode
 
+	local function ButtonColor(opt): Color3
+		if not opt.action then
+			return Color3.fromRGB(170, 170, 0)
+		end
+
+		if opt.action == "AcceptQuest" then
+			return Color3.fromRGB(50, 255, 50)
+		end
+
+		return Color3.fromRGB(170, 170, 0)
+	end
+
 	local function handleOptionClick(option: NPCServiceUtils.OptionProps)
 		if option.action then
 			props.onAction(option.action, option.actionParam)
@@ -48,7 +60,7 @@ local function DialogueOptions(props: OptionProps)
 				children["Opt_" .. idx] = e("TextButton", {
 					Text = opt.label,
 					Size = UDim2.fromScale(buttonScaleX, 1),
-					BackgroundColor3 = Color3.fromRGB(170, 170, 0),
+					BackgroundColor3 = ButtonColor(opt),
 					TextColor3 = Color3.fromRGB(255, 255, 255),
 					Font = Enum.Font.GothamBlack,
 					TextScaled = true,

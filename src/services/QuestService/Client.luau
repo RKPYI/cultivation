@@ -16,4 +16,9 @@ function QuestServiceClient.AcceptQuest(self, questId: string)
 	networker:fire("AcceptQuest", questId)
 end
 
+function QuestServiceClient.CompleteQuest(self, questId: string)
+	print("CompleteQuest Client Fired with questId: " .. questId)
+	networker:fire("CompleteQuest", questId)
+end
+
 return QuestServiceClient
