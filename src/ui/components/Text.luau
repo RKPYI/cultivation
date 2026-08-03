@@ -15,6 +15,7 @@ type TextProps = {
 	anchorPoint: Vector2?,
 	zIndex: number?,
 	textSize: number?,
+	maxTextSize: number?,
 
 	ref: React.Ref<TextLabel>?,
 	scaleRef: React.Ref<TextLabel>?,
@@ -30,6 +31,7 @@ local function Text(props: TextProps)
 	local visible = if props.visible ~= nil then props.visible else true
 	local anchorPoint = props.anchorPoint or Vector2.new(0, 0)
 	local zIndex = props.zIndex or 1
+	local maxTextSize = props.maxTextSize or 500
 	return e("TextLabel", {
 		ref = props.ref,
 		AnchorPoint = anchorPoint,
@@ -51,6 +53,9 @@ local function Text(props: TextProps)
 		}),
 		UIScale = e("UIScale", {
 			ref = props.scaleRef,
+		}),
+		UITextSizeConstraint = e("UITextSizeConstraint", {
+			MaxTextSize = maxTextSize,
 		}),
 	})
 end

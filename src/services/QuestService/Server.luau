@@ -174,7 +174,6 @@ function QuestServiceServer.RealmListener(self: QuestServiceServer, player: Play
 					progress.currentAmount = newRealm
 					if progress.currentAmount >= targetRealm then
 						progress.isCompleted = true
-						print("[Server] Quest Completed: " .. config.title)
 					end
 				end
 			end

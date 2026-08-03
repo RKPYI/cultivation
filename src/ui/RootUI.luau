@@ -9,6 +9,7 @@ local Counter = require(ReplicatedStorage.UI.views.Counter)
 local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
+local Quest = require(ReplicatedStorage.UI.views.Quest)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
 
 local e = React.createElement
@@ -47,7 +48,6 @@ local function RootUI()
 
 	React.useEffect(function()
 		local conn = NPCServiceClient.OnNPCTriggered:Connect(function(npcId: string?)
-			print("UseEffect OnNPCTriggered Fired.")
 			setActiveNPC(npcId)
 		end)
 
@@ -72,10 +72,13 @@ local function RootUI()
 			children = renderModalContent(),
 		}),
 
+		Quest = e(Quest),
+
 		DialogueModal = activeNPC ~= nil and e(Dialogue, {
 			npcId = activeNPC,
 			onClose = function()
 				setActiveNPC(nil)
+				NPCServiceClient:CloseNPC()
 			end,
 			onAction = function(action: string, param: string?)
 				if action == "AcceptQuest" and param then

@@ -1,4 +1,5 @@
 export type OptionProps = {
+	order: number,
 	label: string,
 	nextId: string?,
 	action: string?,
@@ -43,13 +44,15 @@ NPCServiceUtils.Data = {
 				text = "You're too weak to take any mission from me. Reach Qi Condensation I first.",
 				options = {
 					{
-						label = "Accept. (Quest: Cultivate to Qi Condensation I)",
+						order = 1,
+						label = "Accept.",
 						action = "AcceptQuest",
 						actionParam = "Cultivate_01",
 						nextId = nil,
 					},
 					{
-						label = "...",
+						order = 2,
+						label = "Maybe later...",
 						nextId = nil,
 					},
 				},
@@ -58,7 +61,8 @@ NPCServiceUtils.Data = {
 				text = "Why are you back? you haven't reached Qi Condensation I yet!",
 				options = {
 					{
-						label = "I'm working on it.",
+						order = 1,
+						label = "I'm on it.",
 						nextId = nil,
 					},
 				},
@@ -67,6 +71,7 @@ NPCServiceUtils.Data = {
 				text = "Not bad. You've reached Qi Condensation I. Here is your reward.",
 				options = {
 					{
+						order = 1,
 						label = "Claim Reward",
 						action = "CompleteQuest",
 						actionParam = "Cultivate_01",
@@ -79,7 +84,8 @@ NPCServiceUtils.Data = {
 				text = "You have proven your worth. I have nothing left to teach you.",
 				options = {
 					{
-						label = "Thank you, elder.",
+						order = 1,
+						label = "Thank you, Elder.",
 						nextId = nil,
 					},
 				},

@@ -8,6 +8,8 @@ local Sound = {}
 local clickSfx = SoundService:WaitForChild("uiClick") :: Sound
 local hoverSfx = SoundService:WaitForChild("uiClickHover") :: Sound
 local BreakthroughSfx = SoundService:WaitForChild("breakthroughsfx") :: Sound
+local acceptQuestSfx = SoundService:WaitForChild("Twinkling SFX noise") :: Sound
+local completeQuestSfx = SoundService:WaitForChild("CollectAdjusted") :: Sound
 
 function Sound.play(sound: Sound?)
 	if not sound then
@@ -36,6 +38,14 @@ end
 
 function Sound.playBreakthrough()
 	Sound.play(BreakthroughSfx)
+end
+
+function Sound.playAcceptQuest()
+	Sound.play(acceptQuestSfx)
+end
+
+function Sound.playCompleteQuest()
+	Sound.play(completeQuestSfx)
 end
 
 return Sound
