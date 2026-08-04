@@ -154,6 +154,19 @@ function QuestServiceServer.CompleteQuest(self: QuestServiceServer, player: Play
 		local updated = BigNum.add(spiritualStones, questBonusSpiritualStone)
 		return updated
 	end)
+
+	local item = questConfig.rewards.item
+	if item then
+		Data[player].inventory.item(function(currentItems)
+			local updated = table.clone(currentItems)
+			table.insert(updated, item)
+			return updated
+		end)
+
+		Data[player].inventory.newItem(function()
+			return true
+		end)
+	end
 end
 
 function QuestServiceServer.RealmListener(self: QuestServiceServer, player: Player)

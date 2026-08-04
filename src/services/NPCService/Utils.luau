@@ -92,6 +92,30 @@ NPCServiceUtils.Data = {
 			},
 		},
 	} :: NPCConfig,
+
+	["RanDK"] = {
+		name = "RanDK",
+		title = "Creator",
+		initialNode = "greeting",
+
+		dialogues = {
+			["greeting"] = {
+				text = "Yo! Welcome to the Game, Hope you enjoys it ;D.",
+				options = {
+					{
+						order = 1,
+						label = "Of course!!",
+						nextId = nil,
+					},
+					{
+						order = 2,
+						label = "Hell nah",
+						nextId = nil,
+					},
+				},
+			},
+		},
+	},
 }
 
 return NPCServiceUtils

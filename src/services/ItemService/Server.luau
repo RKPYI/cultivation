@@ -15,6 +15,7 @@ export type ItemServiceServer = typeof(setmetatable({} :: State, { __index = {} 
 	OnPlayerRemoving: (self: ItemServiceServer, player: Player) -> (),
 
 	toggleEquipItem: (self: ItemServiceServer, player: Player, item: string) -> (),
+	turnOffNotification: (self: ItemServiceServer, player: Player) -> (),
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -31,6 +32,7 @@ function ItemServiceServer.init(self: ItemServiceServer)
 		self,
 		{
 			self.toggleEquipItem,
+			self.turnOffNotification,
 			-- Add public network
 		} :: any
 	)
@@ -90,6 +92,14 @@ function ItemServiceServer.toggleEquipItem(self: ItemServiceServer, player: Play
 	else
 		Data[player].inventory.itemEquipped(item) -- Equip
 	end
+end
+
+function ItemServiceServer.turnOffNotification(self: ItemServiceServer, player: Player)
+	if not Data[player] then
+		return
+	end
+
+	Data[player].inventory.newItem(false)
 end
 
 return ItemServiceServer

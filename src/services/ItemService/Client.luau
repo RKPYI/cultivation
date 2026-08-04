@@ -13,4 +13,9 @@ function ItemServiceClient.ToggleEquipItem(self, item: string)
 	networker:fire("toggleEquipItem", item)
 end
 
+function ItemServiceClient.turnOffNotification(self)
+	print("ITEMSERVICECLIENT: TURNING OFF NOTIFICATION")
+	networker:fire("turnOffNotification")
+end
+
 return ItemServiceClient

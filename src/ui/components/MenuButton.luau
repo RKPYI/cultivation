@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local NotificationBadge = require(ReplicatedStorage.UI.components.NotificationBadge)
 local Text = require(ReplicatedStorage.UI.components.Text)
 local useAnimatedButton = require(ReplicatedStorage.UI.hooks.useAnimatedButton)
 local e = React.createElement
@@ -9,6 +10,7 @@ type buttonProps = {
 	text: string,
 	iconImage: string?,
 	layoutOrder: number?,
+	notificationBadge: boolean?,
 
 	onClick: (() -> ())?,
 }
@@ -54,6 +56,10 @@ local function MenuButton(props: buttonProps)
 			text = props.text,
 			pos = UDim2.fromScale(-0.25, 0.8),
 			size = UDim2.fromScale(1.5, 0.4),
+		}),
+
+		Notification = e(NotificationBadge, {
+			visible = props.notificationBadge or false,
 		}),
 	})
 end

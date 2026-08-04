@@ -13,6 +13,8 @@ export type QuestConfig = {
 	rewards: {
 		spiritualStones: BigNum.BN,
 		qiBonus: number?, -- NOT IMPLEMENTED YET
+
+		item: string?,
 		-- Add more here idk what else though
 	},
 }
@@ -31,6 +33,7 @@ QuestServiceUtils.Data = {
 		targetAmount = 11, -- Always same value for both target value and amount for ReachRealm questType
 		rewards = {
 			spiritualStones = BigNum.fromNumber(200),
+			item = "book1",
 		},
 	},
 

@@ -25,11 +25,12 @@ local template = {
 			"book4",
 			"book5",
 		},
+		newItem = false,
+		itemEquipped = "",
 		weapons = {
 			"wooden_sword",
 		},
 		herbs = {} :: { [string]: number },
-		itemEquipped = "",
 	},
 
 	quests = {
