@@ -16,6 +16,7 @@ type TextProps = {
 	zIndex: number?,
 	textSize: number?,
 	maxTextSize: number?,
+	richText: boolean?,
 
 	ref: React.Ref<TextLabel>?,
 	scaleRef: React.Ref<TextLabel>?,
@@ -32,6 +33,7 @@ local function Text(props: TextProps)
 	local anchorPoint = props.anchorPoint or Vector2.new(0, 0)
 	local zIndex = props.zIndex or 1
 	local maxTextSize = props.maxTextSize or 500
+	local richText = if props.richText ~= nil then props.richText else false
 	return e("TextLabel", {
 		ref = props.ref,
 		AnchorPoint = anchorPoint,
@@ -47,6 +49,7 @@ local function Text(props: TextProps)
 		LayoutOrder = layoutOrder,
 		Visible = visible,
 		ZIndex = zIndex,
+		RichText = richText,
 	}, {
 		UIStroke = e("UIStroke", {
 			Thickness = thickness,

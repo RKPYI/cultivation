@@ -63,11 +63,12 @@ local function Dialogue(props: DialogueProps)
 		}),
 
 		NPCName = e(Text, {
-			text = npcData.name .. " (" .. npcData.title .. ")",
+			text = string.format(`%s <font color="rgb(255,215,0)">(%s)</font>`, npcData.name, npcData.title),
 			size = UDim2.fromScale(0.96, 0.15),
 			pos = UDim2.fromScale(0.02, -0.08),
-			textColor3 = Color3.fromRGB(255, 215, 0),
+			textColor3 = Color3.fromRGB(255, 255, 255),
 			textXAlignment = Enum.TextXAlignment.Left,
+			richText = true,
 		}),
 
 		NPCText = e(Text, {
