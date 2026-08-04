@@ -96,4 +96,6 @@ end
 
 return RootUI
 
--- 127597807958112
+-- Credits:
+-- https://www.flaticon.com/free-icon/gems_3621938?related_id=3621888&origin=search
+-- https://www.flaticon.com/free-icon/fire_1453025?term=fire&page=1&position=13&origin=search&related_id=1453025
