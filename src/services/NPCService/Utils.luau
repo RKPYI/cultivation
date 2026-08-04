@@ -21,13 +21,10 @@ export type NPCConfig = {
 local NPCServiceUtils = {}
 
 NPCServiceUtils.Data = {
-	["OldMan"] = {
-		name = "Mysterious Old Man",
+	["???"] = {
+		name = "Mysterious Being",
 		title = "???",
-		-- initialNode = "greeting",
 		initialNode = function(quests)
-			-- local quests = playerData.quests
-
 			if not quests.completed["Cultivate_01"] then
 				if quests.active["Cultivate_01"] then
 					return quests.active["Cultivate_01"].isCompleted and "q1_claim" or "q1_in_progress"
