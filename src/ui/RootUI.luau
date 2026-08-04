@@ -61,7 +61,7 @@ local function RootUI()
 			qi = "qi",
 			qiImage = "rbxassetid://81588162443025",
 			spiritStone = "spiritualStones",
-			spiritImage = "rbxassetid://97406683523245",
+			spiritImage = "rbxassetid://100281307393248",
 		}),
 		BreakthroughHUD = e(Breakthrough),
 		Menu = e(Menu, {
