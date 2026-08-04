@@ -4,8 +4,10 @@ local React = require(ReplicatedStorage.Packages.React)
 local CounterItem = require(ReplicatedStorage.UI.components.CounterItem)
 
 export type CounterProps = {
-	currency: string,
-	image: string?,
+	qi: string,
+	qiImage: string?,
+	spiritStone: string,
+	spiritImage: string,
 }
 
 local e = React.createElement
@@ -20,12 +22,20 @@ local function Counter(props: CounterProps)
 			Padding = UDim.new(0, 10),
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+			SortOrder = Enum.SortOrder.LayoutOrder,
 		}),
 
-		CounterComponent = e(CounterItem, {
-			currency = props.currency,
-			image = props.image,
+		SpiritualStone = e(CounterItem, {
+			currency = props.spiritStone,
+			image = props.spiritImage,
+			layoutOrder = 1,
+		}),
+
+		Qi = e(CounterItem, {
+			currency = props.qi,
+			image = props.qiImage,
 			persecCounter = true,
+			layoutOrder = 2,
 		}),
 	})
 end

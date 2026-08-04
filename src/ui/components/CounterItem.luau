@@ -12,6 +12,7 @@ type CounterProps = {
 	currency: string,
 	image: string?,
 	persecCounter: boolean,
+	layoutOrder: number,
 }
 
 local function Capitalize(letter: string)
@@ -45,6 +46,7 @@ local function CounterItem(props: CounterProps)
 		return e("Frame", {
 			Size = UDim2.new(1, 0, 0.1, 20),
 			BackgroundTransparency = 1,
+			LayoutOrder = props.layoutOrder,
 		}, {
 			Texture = e("ImageLabel", {
 				BackgroundTransparency = 1,

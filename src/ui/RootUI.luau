@@ -57,9 +57,11 @@ local function RootUI()
 	end, {})
 
 	return e(React.Fragment, nil, {
-		qiCounter = e(Counter, {
-			currency = "qi",
-			image = "rbxassetid://81588162443025",
+		currencyCounter = e(Counter, {
+			qi = "qi",
+			qiImage = "rbxassetid://81588162443025",
+			spiritStone = "spiritualStones",
+			spiritImage = "rbxassetid://138719213932588",
 		}),
 		BreakthroughHUD = e(Breakthrough),
 		Menu = e(Menu, {
@@ -93,3 +95,5 @@ local function RootUI()
 end
 
 return RootUI
+
+-- 127597807958112
