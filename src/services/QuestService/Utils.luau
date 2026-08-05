@@ -37,6 +37,17 @@ QuestServiceUtils.Data = {
 		},
 	},
 
+	["Kill_01"] = {
+		id = "Kill_01",
+		title = "First Enemy",
+		description = "Beat 10 Slimes to finish the job.",
+		questType = "KillMob",
+		targetValue = "Slime",
+		targetAmount = 10,
+		rewards = {
+			spiritualStones = BigNum.fromNumber(500),
+		},
+	},
 	-- Add more quest for hunting, herb collection
 } :: { [string]: QuestConfig }
 

@@ -18,18 +18,13 @@ local template = {
 	},
 
 	inventory = {
-		item = {
-			"book1",
-			"book2",
-			"book3",
-			"book4",
-			"book5",
-		},
+		item = {} :: { string },
 		newItem = false,
 		itemEquipped = "",
 		weapons = {
 			"wooden_sword",
 		},
+		weaponEquipped = "wooden_sword",
 		herbs = {} :: { [string]: number },
 	},
 

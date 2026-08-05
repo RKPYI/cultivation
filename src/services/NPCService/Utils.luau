@@ -18,7 +18,38 @@ export type NPCConfig = {
 	dialogues: { [string]: DialogueNode },
 }
 
+export type QuestMarkState = "Available" | "Claimable" | "InProgress" | "None"
+
 local NPCServiceUtils = {}
+
+function NPCServiceUtils.getNPCQuestState(npcConfig: NPCConfig, questData): QuestMarkState
+	if not questData or type(npcConfig.initialNode) ~= "function" then
+		return "None"
+	end
+
+	local node = npcConfig.initialNode(questData)
+
+	if node:find("_start") then
+		return "Available"
+	elseif node:find("_claim") then
+		return "Claimable"
+	elseif node:find("_in_progress") then
+		return "InProgress"
+	end
+
+	return "None"
+end
+
+function NPCServiceUtils.getNPCQuestMarkVisibility(npcConfig: NPCConfig, questData)
+	local state = NPCServiceUtils.getNPCQuestState(npcConfig, questData)
+	print("STATE: " .. state)
+	return {
+		showExclamation = (state == "Available"),
+		showQuestion = (state == "Claimable" or state == "InProgress"),
+		questionColor = if state == "Claimable" then Color3.fromRGB(255, 215, 0) else Color3.fromRGB(130, 130, 130),
+		exclamationColor = Color3.fromRGB(255, 255, 255),
+	}
+end
 
 NPCServiceUtils.Data = {
 	["???"] = {
@@ -30,6 +61,14 @@ NPCServiceUtils.Data = {
 					return quests.active["Cultivate_01"].isCompleted and "q1_claim" or "q1_in_progress"
 				else
 					return "q1_start"
+				end
+			end
+
+			if not quests.completed["Kill_01"] then
+				if quests.active["Kill_01"] then
+					return quests.active["Kill_01"].isCompleted and "q2_claim" or "q2_in_progress"
+				else
+					return "q2_start"
 				end
 			end
 
@@ -72,7 +111,47 @@ NPCServiceUtils.Data = {
 						label = "Claim Reward",
 						action = "CompleteQuest",
 						actionParam = "Cultivate_01",
-						nextId = nil, -- "q2_start"
+						nextId = "q2_start", -- "q2_start"
+					},
+				},
+			},
+
+			["q2_start"] = {
+				text = "Now try to beat 10 slimes.",
+				options = {
+					{
+						order = 1,
+						label = "Okay.",
+						action = "AcceptQuest",
+						actionParam = "Kill_01",
+						nextId = nil,
+					},
+					{
+						order = 2,
+						label = "Maybe later.",
+						nextId = nil,
+					},
+				},
+			},
+			["q2_in_progress"] = {
+				text = "Why are you back? you haven't kill 10 Slimes yet!",
+				options = {
+					{
+						order = 1,
+						label = "I'm on it.",
+						nextId = nil,
+					},
+				},
+			},
+			["q2_claim"] = {
+				text = "Not bad. You've reached Qi Condensation I. Here is your reward.",
+				options = {
+					{
+						order = 1,
+						label = "Claim Reward",
+						action = "CompleteQuest",
+						actionParam = "Kill_01",
+						nextId = nil,
 					},
 				},
 			},
