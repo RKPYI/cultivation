@@ -42,7 +42,7 @@ end
 
 function NPCServiceUtils.getNPCQuestMarkVisibility(npcConfig: NPCConfig, questData)
 	local state = NPCServiceUtils.getNPCQuestState(npcConfig, questData)
-	print("STATE: " .. state)
+
 	return {
 		showExclamation = (state == "Available"),
 		showQuestion = (state == "Claimable" or state == "InProgress"),
@@ -168,6 +168,32 @@ NPCServiceUtils.Data = {
 			},
 		},
 	} :: NPCConfig,
+
+	["Shopkeeper"] = {
+		name = "Jim",
+		title = "Shopkeeper",
+		initialNode = "greeting",
+
+		dialogues = {
+			["greeting"] = {
+				text = "New guy? Im selling a quality item here, take a look!",
+				options = {
+					{
+						order = 1,
+						label = "Of course!!",
+						action = "OpenShop",
+						actionParam = "JimShop",
+						nextId = nil,
+					},
+					{
+						order = 2,
+						label = "Hell nah",
+						nextId = nil,
+					},
+				},
+			},
+		},
+	},
 
 	["RanDK"] = {
 		name = "RanDK",
