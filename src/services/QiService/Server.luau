@@ -101,7 +101,7 @@ function QiServiceServer.StartQiLoop(self: QiServiceServer, player: Player, zone
 	self.activeLoops[player][zoneName] = true
 
 	task.spawn(function()
-		while self.activeLoops[player][zoneName] do
+		while self.activeLoops[player] and self.activeLoops[player][zoneName] do
 			local playerRealm = Data[player].realm() or 0
 			if playerRealm >= zoneConfig.realmReq then
 				self:GiveQi(player, zoneName)
