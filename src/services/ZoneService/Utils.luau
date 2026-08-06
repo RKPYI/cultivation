@@ -43,6 +43,10 @@ Zone.Data = {
 
 function Zone.CalculateDist(zone: Part, callback: (player: Player, isInside: boolean) -> ())
 	zone.Touched:Connect(function(hit)
+		if hit.Name ~= "HumanoidRootPart" then
+			return
+		end
+
 		local character = hit.Parent
 		if not character then
 			return
@@ -55,6 +59,10 @@ function Zone.CalculateDist(zone: Part, callback: (player: Player, isInside: boo
 	end)
 
 	zone.TouchEnded:Connect(function(hit)
+		if hit.Name ~= "HumanoidRootPart" then
+			return
+		end
+
 		local character = hit.Parent
 		if not character then
 			return
