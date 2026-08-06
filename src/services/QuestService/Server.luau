@@ -111,7 +111,7 @@ function QuestServiceServer.AcceptQuest(self: QuestServiceServer, player: Player
 		end
 
 		if questConfig.questType == "TotalKillEnemy" then
-			local totalKill = Data[player].totalEnemyKilled[questConfig.targetValue]()
+			local totalKill = Data[player].totalEnemyKilled[questConfig.targetValue]() or 0
 			startingAmount = totalKill
 		end
 
