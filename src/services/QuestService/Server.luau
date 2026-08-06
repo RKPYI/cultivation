@@ -8,15 +8,15 @@ local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local QuestServiceUtils = require(ReplicatedStorage.Shared.Services.QuestService.QuestServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
--- type QuestProgress = {
--- 	questId: string,
--- 	currentAmount: number,
--- 	targetAmount: number,
--- 	isCompleted: boolean,
--- }
+type QuestProgress = {
+	questId: string,
+	currentAmount: number,
+	targetAmount: number,
+	isCompleted: boolean,
+}
 
 type State = {
-	-- 	playerQuests: { [Player]: { [string]: QuestProgress } },
+	playerQuests: { [Player]: { [string]: QuestProgress } },
 }
 
 export type QuestServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -28,6 +28,7 @@ export type QuestServiceServer = typeof(setmetatable({} :: State, { __index = {}
 	AcceptQuest: (self: QuestServiceServer, player: Player, questId: string) -> (),
 	CompleteQuest: (self: QuestServiceServer, player: Player, questId: string) -> (),
 	RealmListener: (self: QuestServiceServer, player: Player) -> (),
+	EnemyListener: (self: QuestServiceServer, player: Player) -> (),
 
 	-- Networker
 	networker: any,
@@ -37,7 +38,7 @@ local QuestServiceServer = {} :: QuestServiceServer
 
 -- Setup
 function QuestServiceServer.init(self: QuestServiceServer)
-	-- self.playerQuests = {}
+	self.playerQuests = {}
 
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
@@ -60,6 +61,7 @@ function QuestServiceServer.init(self: QuestServiceServer)
 end
 
 function QuestServiceServer.OnPlayerAdded(self: QuestServiceServer, player: Player)
+	self.playerQuests[player] = {}
 	task.spawn(function()
 		while not Data[player] and player:IsDescendantOf(Players) do
 			task.wait(0.1)
@@ -71,11 +73,12 @@ function QuestServiceServer.OnPlayerAdded(self: QuestServiceServer, player: Play
 
 		-- Function that need player data
 		self:RealmListener(player)
+		self:EnemyListener(player)
 	end)
 end
 
 function QuestServiceServer.OnPlayerRemoving(self: QuestServiceServer, player: Player)
-	-- self.playerQuests[player] = nil
+	self.playerQuests[player] = nil
 end
 
 function QuestServiceServer.start(self: QuestServiceServer) end
@@ -105,6 +108,11 @@ function QuestServiceServer.AcceptQuest(self: QuestServiceServer, player: Player
 
 		if questConfig.questType == "ReachRealm" then
 			startingAmount = currentRealm
+		end
+
+		if questConfig.questType == "TotalKillEnemy" then
+			local totalKill = Data[player].totalEnemyKilled[questConfig.targetValue]()
+			startingAmount = totalKill
 		end
 
 		updated[questId] = {
@@ -188,6 +196,39 @@ function QuestServiceServer.RealmListener(self: QuestServiceServer, player: Play
 					if progress.currentAmount >= targetRealm then
 						progress.isCompleted = true
 					end
+				end
+			end
+
+			return updated
+		end)
+	end)
+end
+
+function QuestServiceServer.EnemyListener(self: QuestServiceServer, player: Player)
+	local PlayerData = Data[player]
+	if not PlayerData then
+		warn("[QuestServiceServer] EnemyListener returned early because there is no PlayerData")
+		return
+	end
+
+	Data[player].totalEnemyKilled.Changed(function(newEnemyList)
+		Data[player].quests.active(function(currentQuests)
+			local updated = table.clone(currentQuests)
+
+			for questId, progress in updated do
+				local config = QuestServiceUtils.Data[questId]
+				if config and config.questType == "TotalKillEnemy" and not progress.isCompleted then
+					local targetEnemy = config.targetValue :: number
+					local killedCount = newEnemyList[targetEnemy] or 0
+
+					local progressCopy = table.clone(progress)
+
+					progressCopy.currentAmount = math.min(killedCount, config.targetAmount)
+					if progressCopy.currentAmount >= config.targetAmount then
+						progressCopy.isCompleted = true
+					end
+
+					updated[questId] = progressCopy
 				end
 			end
 

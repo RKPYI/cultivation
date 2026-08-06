@@ -30,7 +30,7 @@ local template = {
 
 	quests = {
 		active = {} :: {
-			[string]: {
+			[string]: { -- [string] = quest id
 				currentAmount: number,
 				targetAmount: number,
 				isCompleted: boolean,
@@ -38,6 +38,8 @@ local template = {
 		},
 		completed = {} :: { [string]: boolean },
 	},
+
+	totalEnemyKilled = {} :: { [string]: number }, -- [string] = Enemy id, number = amount of enemy killed
 }
 
 return DataServiceTyped({

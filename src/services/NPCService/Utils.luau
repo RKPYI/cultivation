@@ -144,7 +144,7 @@ NPCServiceUtils.Data = {
 				},
 			},
 			["q2_claim"] = {
-				text = "Not bad. You've reached Qi Condensation I. Here is your reward.",
+				text = "Not bad. Here is your reward before doing the next quest, you'll need it.",
 				options = {
 					{
 						order = 1,

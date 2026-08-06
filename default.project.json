@@ -7,6 +7,12 @@
         "$className": "Folder",
         "Services": {
           "$className": "Folder",
+          "EnemyService": {
+            "$className": "Folder",
+            "EnemyServiceUtils": {
+              "$path": "src/services/EnemyService/Utils.luau"
+            }
+          },
           "ItemService": {
             "$className": "Folder",
             "ItemServiceClient": {
@@ -73,6 +79,12 @@
               "$path": "src/services/UserInputService/Client.luau"
             }
           },
+          "WeaponService": {
+            "$className": "Folder",
+            "WeaponServiceUtils": {
+              "$path": "src/services/WeaponService/Utils.luau"
+            }
+          },
           "ZoneService": {
             "$className": "Folder",
             "ZoneServiceClient": {
@@ -112,6 +124,12 @@
       },
       "Services": {
         "$className": "Folder",
+        "EnemyService": {
+          "$className": "Folder",
+          "EnemyServiceServer": {
+            "$path": "src/services/EnemyService/Server.luau"
+          }
+        },
         "ItemService": {
           "$className": "Folder",
           "ItemServiceServer": {

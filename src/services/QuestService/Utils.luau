@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
-export type QuestType = "ReachRealm" | "KillMob" | "GatherHerb"
+export type QuestType = "ReachRealm" | "TotalKillEnemy" | "KillEnemy" | "GatherHerb"
 
 export type QuestConfig = {
 	id: string,
@@ -40,12 +40,13 @@ QuestServiceUtils.Data = {
 	["Kill_01"] = {
 		id = "Kill_01",
 		title = "First Enemy",
-		description = "Beat 10 Slimes to finish the job.",
-		questType = "KillMob",
-		targetValue = "Slime",
+		description = "Kill Total 10 Slimes to finish the quest.",
+		questType = "TotalKillEnemy",
+		targetValue = "slime",
 		targetAmount = 10,
 		rewards = {
 			spiritualStones = BigNum.fromNumber(500),
+			item = "book2",
 		},
 	},
 	-- Add more quest for hunting, herb collection
