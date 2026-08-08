@@ -125,7 +125,11 @@ function ItemServiceServer.buyItem(self, player, itemId)
 	end
 
 	-- START PURCHASE
-	BigNum.sub(playerSpiritStones, itemData.price)
+	Data[player].spiritualStones(function(spiritStone)
+		local updated = BigNum.sub(spiritStone, itemData.price)
+		return updated
+	end)
+
 	Data[player].inventory.item(function(currentItem)
 		local updated = table.clone(currentItem)
 
