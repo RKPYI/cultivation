@@ -22,6 +22,7 @@ local function RootUI()
 
 	local handleOpen = React.useCallback(function(menuName: string)
 		setActiveModal(function(prevMenuName)
+			setActiveShop(nil)
 			-- If same button clicked twice, it closes the modal
 			if menuName == prevMenuName then
 				return nil
