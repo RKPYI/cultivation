@@ -9,6 +9,7 @@ type ModalProps = {
 	text: string,
 	onClose: () -> (),
 	children: any?,
+	background: string?,
 }
 
 local function Modal(props: ModalProps)
@@ -67,7 +68,7 @@ local function Modal(props: ModalProps)
 		ImageLabel = e("ImageLabel", {
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 1),
-			Image = "rbxassetid://138496797110912",
+			Image = props.background or "rbxassetid://138496797110912",
 			Active = false,
 		}),
 

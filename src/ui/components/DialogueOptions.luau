@@ -30,6 +30,10 @@ local function DialogueOptions(props: OptionProps)
 			return Color3.fromRGB(255, 255, 0)
 		end
 
+		if opt.action == "OpenShop" then
+			return Color3.fromRGB(59, 57, 255)
+		end
+
 		return Color3.fromRGB(191, 191, 191)
 	end
 

@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local NPCServiceClient = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceClient)
+local NPCServiceUtils = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceUtils)
 local QuestServiceClient = require(ReplicatedStorage.Shared.Services.QuestService.QuestServiceClient)
 local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
@@ -32,6 +33,7 @@ local function RootUI()
 
 	local handleClose = React.useCallback(function()
 		setActiveModal(nil)
+		setActiveShop(nil)
 	end, {})
 
 	local function renderModalContent()
@@ -77,9 +79,10 @@ local function RootUI()
 		}),
 
 		Modal = activeModal ~= nil and e(Modal, {
-			text = activeModal,
+			text = activeShop and NPCServiceUtils.Shops[activeShop].shopName or activeModal,
 			onClose = handleClose,
 			children = renderModalContent(),
+			background = activeShop and NPCServiceUtils.Shops[activeShop].background or "rbxassetid://138496797110912",
 		}),
 
 		Quest = e(Quest),

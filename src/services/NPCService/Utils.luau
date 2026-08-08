@@ -25,6 +25,7 @@ export type QuestMarkState = "Available" | "Claimable" | "InProgress" | "None"
 
 export type Shop = {
 	shopName: string,
+	background: string,
 	items: { string },
 }
 
@@ -82,6 +83,7 @@ end
 NPCServiceUtils.Shops = {
 	JimShop = {
 		shopName = "Jim's Scroll Shop",
+		background = "rbxassetid://98309507803049",
 		items = { "scroll1", "scroll2", "scroll3", "scroll4", "scroll5" },
 	},
 } :: { [string]: Shop }
