@@ -156,7 +156,7 @@ local function ShopCard(props: ShopCardProps)
 			RealmReq = e(Text, {
 				anchorPoint = Vector2.new(0.5, 0.5),
 				size = UDim2.fromScale(0.9, 0.2),
-				textColor3 = meetsRealm and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(255, 107, 109),
+				textColor3 = if meetsRealm then Color3.fromRGB(130, 200, 255) else Color3.fromRGB(255, 107, 109),
 				text = "Req: " .. RealmServiceUtils.RealmName(info.realmReq), -- SHOULD  BE DYNAMIC TO THE ITEM REALM REQ
 				layoutOrder = 2,
 			}),
@@ -172,11 +172,13 @@ local function ShopCard(props: ShopCardProps)
 				boost1 = statBoosts[1] and e(Text, {
 					anchorPoint = Vector2.new(0.5, 0.5),
 					size = UDim2.fromScale(1, 0.4),
+					textColor3 = Color3.fromRGB(85, 255, 127),
 					text = statBoosts[1], -- SHOULD BE DYNAMIC TO THE ITEM BOOSTED STAT
 				}),
 				boost2 = statBoosts[2] and e(Text, {
 					anchorPoint = Vector2.new(0.5, 0.5),
 					size = UDim2.fromScale(1, 0.4),
+					textColor3 = Color3.fromRGB(255, 161, 85),
 					text = statBoosts[2], -- SHOULD BE DYNAMIC TO THE ITEM BOOSTED STAT
 				}),
 			}),
