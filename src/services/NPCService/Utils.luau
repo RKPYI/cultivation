@@ -1,3 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
 export type OptionProps = {
 	order: number,
 	label: string,
@@ -19,6 +22,11 @@ export type NPCConfig = {
 }
 
 export type QuestMarkState = "Available" | "Claimable" | "InProgress" | "None"
+
+export type Shop = {
+	shopName: string,
+	items: { string },
+}
 
 local NPCServiceUtils = {}
 
@@ -50,6 +58,33 @@ function NPCServiceUtils.getNPCQuestMarkVisibility(npcConfig: NPCConfig, questDa
 		exclamationColor = Color3.fromRGB(255, 255, 255),
 	}
 end
+
+function NPCServiceUtils.getShopItems(shopId: string)
+	local shopConfig = NPCServiceUtils.Shops[shopId]
+	if not shopConfig then
+		return {}
+	end
+
+	local resolvedItems = {}
+	for _, itemId in shopConfig.items do
+		local info = ItemServiceUtils.Data[itemId]
+		if info then
+			table.insert(resolvedItems, {
+				id = itemId,
+				info = info,
+			})
+		end
+	end
+
+	return resolvedItems
+end
+
+NPCServiceUtils.Shops = {
+	JimShop = {
+		shopName = "Jim's Scroll Shop",
+		items = { "scroll1", "scroll2", "scroll3", "scroll4", "scroll5" },
+	},
+} :: { [string]: Shop }
 
 NPCServiceUtils.Data = {
 	["???"] = {

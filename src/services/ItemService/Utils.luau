@@ -1,3 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local Item = {}
 
 export type ItemInfo = {
@@ -5,9 +8,10 @@ export type ItemInfo = {
 	image: string,
 	realmReq: number,
 	qiMultiplier: number,
+	dmgMultiplier: number,
+	price: BigNum.BN?,
 }
 
--- DEFAULT IMAGE: "rbxassetid://80557352288392"
 Item.Data = {
 	book1 = {
 		name = "Basic Manual Book",
@@ -31,13 +35,54 @@ Item.Data = {
 		name = "Soul Formation Book",
 		image = "rbxassetid://117849238997175",
 		realmReq = 55,
-		qiMultiplier = 2,
+		qiMultiplier = 2.5,
 	},
 	book5 = {
 		name = "Body Integration Book",
 		image = "rbxassetid://134161933386968",
 		realmReq = 75,
+		qiMultiplier = 5,
+	},
+
+	scroll1 = {
+		name = "Common Scroll",
+		image = "rbxassetid://116520877504123",
+		realmReq = 20,
+		qiMultiplier = 1.5,
+		dmgMultiplier = 1.1,
+		price = 500,
+	},
+	scroll2 = {
+		name = "Uncommon Scroll",
+		image = "rbxassetid://83016027871475",
+		realmReq = 30,
+		qiMultiplier = 1.6,
+		dmgMultiplier = 1.2,
+		price = 1000,
+	},
+	scroll3 = {
+		name = "Rare Scroll",
+		image = "rbxassetid://133891318823760",
+		realmReq = 40,
+		qiMultiplier = 1.8,
+		dmgMultiplier = 1.5,
+		price = 2000,
+	},
+	scroll4 = {
+		name = "Epic Scroll",
+		image = "rbxassetid://133010596383800",
+		realmReq = 50,
+		qiMultiplier = 2,
+		dmgMultiplier = 2,
+		price = 5000,
+	},
+	scroll5 = {
+		name = "Legendary Scroll",
+		image = "rbxassetid://71382641711697",
+		realmReq = 60,
 		qiMultiplier = 3,
+		dmgMultiplier = 2.5,
+		price = 10000,
 	},
 } :: { [string]: ItemInfo }
 

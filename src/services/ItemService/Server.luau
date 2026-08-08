@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
 local Data = require(ReplicatedStorage.Shared.Data).server
 
@@ -16,6 +17,7 @@ export type ItemServiceServer = typeof(setmetatable({} :: State, { __index = {} 
 
 	toggleEquipItem: (self: ItemServiceServer, player: Player, item: string) -> (),
 	turnOffNotification: (self: ItemServiceServer, player: Player) -> (),
+	buyItem: (self: ItemServiceServer, player: Player, itemId: string) -> (),
 	-- ... Add More Functions Here
 
 	-- Networker
@@ -33,6 +35,7 @@ function ItemServiceServer.init(self: ItemServiceServer)
 		{
 			self.toggleEquipItem,
 			self.turnOffNotification,
+			self.buyItem,
 			-- Add public network
 		} :: any
 	)
@@ -100,6 +103,41 @@ function ItemServiceServer.turnOffNotification(self: ItemServiceServer, player: 
 	end
 
 	Data[player].inventory.newItem(false)
+end
+
+function ItemServiceServer.buyItem(self, player, itemId)
+	if not Data[player] then
+		return
+	end
+
+	-- ALL OF THIS COULD BE CHANGED IN THE FUTURE WHEN THERES MULTIPLE CURRENCY AND MULTIPLE ITEM TYPE (WEAPON, ITEM, AURA, ETC.)
+	local itemData = ItemServiceUtils.Data[itemId]
+	if Data[player].realm() < itemData.realmReq then
+		return
+	end
+	local playerItems = Data[player].inventory.item()
+	if table.find(playerItems, itemId) ~= nil then
+		return
+	end
+	local playerSpiritStones = Data[player].spiritualStones()
+	if BigNum.lt(playerSpiritStones, itemData.price) then
+		return
+	end
+
+	-- START PURCHASE
+	BigNum.sub(playerSpiritStones, itemData.price)
+	Data[player].inventory.item(function(currentItem)
+		local updated = table.clone(currentItem)
+
+		table.insert(updated, itemId)
+
+		return updated
+	end)
+
+	-- TURN ON NOTIFICATION
+	Data[player].inventory.newItem(function()
+		return true
+	end)
 end
 
 return ItemServiceServer

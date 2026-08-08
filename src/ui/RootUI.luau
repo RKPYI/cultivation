@@ -9,6 +9,7 @@ local Counter = require(ReplicatedStorage.UI.views.Counter)
 local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
+local NPCShop = require(ReplicatedStorage.UI.views.NPCShop)
 local Quest = require(ReplicatedStorage.UI.views.Quest)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
 
@@ -16,6 +17,7 @@ local e = React.createElement
 
 local function RootUI()
 	local activeModal, setActiveModal = React.useState(nil)
+	local activeShop, setActiveShop = React.useState(nil)
 
 	local handleOpen = React.useCallback(function(menuName: string)
 		setActiveModal(function(prevMenuName)
@@ -39,6 +41,12 @@ local function RootUI()
 
 		if activeModal == "Inventory" then
 			return e(Inventory)
+		end
+
+		if activeModal == "NPCShop" then
+			return e(NPCShop, {
+				shopId = activeShop,
+			})
 		end
 
 		return nil
@@ -88,6 +96,13 @@ local function RootUI()
 				end
 				if action == "CompleteQuest" and param then
 					QuestServiceClient:CompleteQuest(param)
+				end
+				if action == "OpenShop" and param then
+					setActiveNPC(nil)
+					NPCServiceClient:CloseNPC()
+
+					setActiveShop(param)
+					setActiveModal("NPCShop")
 				end
 			end,
 		}),

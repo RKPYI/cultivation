@@ -136,6 +136,12 @@
             "$path": "src/services/ItemService/Server.luau"
           }
         },
+        "NPCService": {
+          "$className": "Folder",
+          "NPCServiceServer": {
+            "$path": "src/services/NPCService/Server.luau"
+          }
+        },
         "OverheadService": {
           "$className": "Folder",
           "OverheadServiceServer": {

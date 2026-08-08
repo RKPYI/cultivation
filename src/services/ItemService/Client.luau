@@ -18,4 +18,8 @@ function ItemServiceClient.turnOffNotification(self)
 	networker:fire("turnOffNotification")
 end
 
+function ItemServiceClient.NPCShopBuyItem(self, itemId: string)
+	networker:fire("buyItem", itemId)
+end
+
 return ItemServiceClient

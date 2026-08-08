@@ -20,4 +20,6 @@ function NPCServiceClient.CloseNPC(self)
 	NPCServiceClient.OnNPCTriggered:Fire(nil)
 end
 
+function NPCServiceClient.OpenShop(self, shopId: string) end
+
 return NPCServiceClient
