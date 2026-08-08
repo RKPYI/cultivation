@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local EnemyServiceUtils = require(ReplicatedStorage.Shared.Services.EnemyService.EnemyServiceUtils)
+local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local WeaponServiceUtils = require(ReplicatedStorage.Shared.Services.WeaponService.WeaponServiceUtils)
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
@@ -135,13 +136,19 @@ function EnemyServiceServer.AttackEnemy(self, player, enemyIdModel)
 	if not weaponData then
 		return
 	end
+	local dmg = weaponData.atk
+	local playerItem = Data[player].inventory.itemEquipped()
+	local itemData = ItemServiceUtils.Data[playerItem]
+	if itemData then
+		dmg = dmg * (itemData.dmgMultiplier or 1)
+	end
 
 	local currentHealth = EnemyModel:GetAttribute("health") :: number? or enemyData.maxHealth
 	if currentHealth <= 0 then
 		return
 	end
 
-	local newHealth = math.max(0, currentHealth - weaponData.atk)
+	local newHealth = math.max(0, currentHealth - dmg)
 	EnemyModel:SetAttribute("health", newHealth)
 	self:UpdateEnemyGui(player, enemyIdModel)
 
@@ -200,7 +207,7 @@ function EnemyServiceServer.UpdateEnemyGui(self, player, enemyIdModel)
 		return
 	end
 	local currentHealth = EnemyModel:GetAttribute("health") :: number? or enemyData.maxHealth
-	HealthLabel.Text = currentHealth .. "/" .. enemyData.maxHealth
+	HealthLabel.Text = string.format("%.1f", currentHealth) .. "/" .. enemyData.maxHealth
 
 	local HealthBar = HealthFrame:WaitForChild("currentHealth") :: Frame
 	if not HealthBar then
