@@ -73,8 +73,8 @@ local function Breakthrough()
 	end, { percentage })
 
 	return e("Frame", {
-		Position = UDim2.new(0.25, 0, 0, 10),
-		Size = UDim2.new(0.5, 0, 0.025, 10),
+		Position = UDim2.fromScale(0.25, 0.015),
+		Size = UDim2.fromScale(0.5, 0.025),
 	}, {
 		UICorner = e("UICorner"),
 		UIStroke = e("UIStroke", {
@@ -97,7 +97,7 @@ local function Breakthrough()
 		}),
 		BreakthroughButton = e("TextButton", {
 			BackgroundColor3 = Color3.fromRGB(255, 255, 0),
-			Position = UDim2.new(0.4, 0, 2, 20),
+			Position = UDim2.fromScale(0.4, 2.5),
 			Size = UDim2.fromScale(0.2, 2),
 			Visible = breakthrough,
 			Font = Enum.Font.GothamBlack,
