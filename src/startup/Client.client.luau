@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local ItemServiceClient = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceClient)
+local LeaderboardServiceClient = require(ReplicatedStorage.Shared.Services.LeaderboardService.LeaderboardServiceClient)
 local NPCServiceClient = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceClient)
 local MountUI = require(ReplicatedStorage.UI.MountUI)
 local QiServiceClient = require(ReplicatedStorage.Shared.Services.QiService.QiServiceClient)
@@ -23,6 +24,7 @@ SoundServiceClient:init()
 UserInputServiceClient:init()
 NPCServiceClient:init()
 QuestServiceClient:init()
+LeaderboardServiceClient:init()
 
 MountUI()
 
