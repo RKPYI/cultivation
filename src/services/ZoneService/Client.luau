@@ -15,7 +15,7 @@ local ZoneServiceClient = {}
 local isTouching = {}
 
 function ZoneServiceClient.init(self)
-	networker = Networker.new("QiService", ZoneServiceClient)
+	networker = Networker.new("ZoneService", ZoneServiceClient)
 
 	self:setupAreaUI()
 	self:setupAreaListener()
@@ -120,9 +120,12 @@ function ZoneServiceClient.setupAreaListener(self)
 	end
 end
 
-function ZoneServiceClient.GiveQi(self, zoneName: string)
-	networker:fire("GiveQi", zoneName)
-	-- ADD FLOATING +1 QI in screen
+function ZoneServiceClient.OnZoneChanged(self)
+	return networker:getServerChangedSignal("InZone")
 end
+-- function ZoneServiceClient.GiveQi(self, zoneName: string)
+-- 	networker:fire("GiveQi", zoneName)
+-- 	-- ADD FLOATING +1 QI in screen
+-- end
 
 return ZoneServiceClient

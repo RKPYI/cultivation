@@ -4,6 +4,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local NPCServiceClient = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceClient)
 local NPCServiceUtils = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceUtils)
 local QuestServiceClient = require(ReplicatedStorage.Shared.Services.QuestService.QuestServiceClient)
+local ZoneServiceClient = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceClient)
 local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
@@ -11,6 +12,7 @@ local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
 local NPCShop = require(ReplicatedStorage.UI.views.NPCShop)
+local QiDisplay = require(ReplicatedStorage.UI.views.QiDisplay)
 local Quest = require(ReplicatedStorage.UI.views.Quest)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
 
@@ -67,6 +69,24 @@ local function RootUI()
 		end
 	end, {})
 
+	-- QI DISPLAY
+	local isInZone, setIsInZone = React.useState(false)
+
+	React.useEffect(function()
+		local signal = ZoneServiceClient:OnZoneChanged()
+		if not signal then
+			return
+		end
+
+		local conn = signal:Connect(function(activeZone)
+			setIsInZone(activeZone ~= nil)
+		end)
+
+		return function()
+			conn:Disconnect()
+		end
+	end, {})
+
 	return e(React.Fragment, nil, {
 		currencyCounter = e(Counter, {
 			qi = "qi",
@@ -87,6 +107,10 @@ local function RootUI()
 		}),
 
 		Quest = e(Quest),
+
+		QiMultDisplay = e(QiDisplay, {
+			isInZone = isInZone,
+		}),
 
 		DialogueModal = activeNPC ~= nil and e(Dialogue, {
 			npcId = activeNPC,

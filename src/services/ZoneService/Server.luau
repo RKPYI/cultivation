@@ -90,6 +90,7 @@ function ZoneServiceServer.setupAreaListener(self)
 
 			self.isTouching[player][area.Name] = isInside
 			self.onZoneStateChanged:Fire(player, area.Name, isInside)
+			self.networker:set(player, "InZone", isInside and area.Name or nil)
 		end)
 	end
 end
