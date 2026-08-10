@@ -122,42 +122,15 @@ local function ItemDisplayPanel(props: DisplayPanelProps)
 			}),
 
 			ToggleEquip = e("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = if isEquipped then Color3.fromRGB(255, 107, 109) else Color3.fromRGB(0, 255, 0),
-				Size = UDim2.fromScale(0.45, 1),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Size = UDim2.fromScale(0.6, 1),
 				Font = Enum.Font.GothamBlack,
 				Text = if isEquipped then "Unequip" else "Equip",
 				TextColor3 = Color3.fromRGB(255, 255, 255),
 				TextScaled = true,
 				[React.Event.Activated] = toggleEquip,
-			}, {
-				UICorner = e("UICorner", {
-					CornerRadius = UDim.new(0.25, 0),
-				}),
-				UIPadding = e("UIPadding", {
-					PaddingBottom = UDim.new(0.1, 0),
-					PaddingTop = UDim.new(0.1, 0),
-					PaddingRight = UDim.new(0.1, 0),
-					PaddingLeft = UDim.new(0.1, 0),
-				}),
-				UIStroke = e("UIStroke", {
-					Thickness = 2,
-				}),
-				UIStrokeOuter = e("UIStroke", {
-					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-					Thickness = 2,
-				}),
-			}),
-
-			-- Add functionality to actually delete the item
-			-- Low Priority: Add Confirm Modal before actually deleting it
-			DeleteBtn = e("TextButton", {
-				BackgroundColor3 = Color3.fromRGB(255, 0, 0),
-				Position = UDim2.fromScale(0.5, 0),
-				Size = UDim2.fromScale(0.45, 1),
-				Font = Enum.Font.GothamBlack,
-				Text = "Delete [WIP]",
-				TextColor3 = Color3.fromRGB(255, 255, 255),
-				TextScaled = true,
 			}, {
 				UICorner = e("UICorner", {
 					CornerRadius = UDim.new(0.25, 0),
