@@ -37,9 +37,22 @@ QuestServiceUtils.Data = {
 		},
 	},
 
+	["Cultivate_02"] = {
+		id = "Cultivate_01",
+		title = "Journey Begins (3)",
+		description = "Reach Foundation Establishment I to prove your worth.",
+		questType = "ReachRealm",
+		targetValue = 21,
+		targetAmount = 21, -- Always same value for both target value and amount for ReachRealm questType
+		rewards = {
+			spiritualStones = BigNum.fromNumber(1000),
+			item = "book3",
+		},
+	},
+
 	["Kill_01"] = {
 		id = "Kill_01",
-		title = "First Enemy",
+		title = "Journey Begins (2)",
 		description = "Kill Total 10 Slimes to finish the quest.",
 		questType = "TotalKillEnemy",
 		targetValue = "slime",

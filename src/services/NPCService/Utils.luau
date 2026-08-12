@@ -109,6 +109,14 @@ NPCServiceUtils.Data = {
 				end
 			end
 
+			if not quests.completed["Cultivate_02"] then
+				if quests.active["Cultivate_02"] then
+					return quests.active["Cultivate_02"].isCompleted and "q3_claim" or "q3_in_progress"
+				else
+					return "q3_start"
+				end
+			end
+
 			return "no_more_quests"
 		end,
 
@@ -188,6 +196,46 @@ NPCServiceUtils.Data = {
 						label = "Claim Reward",
 						action = "CompleteQuest",
 						actionParam = "Kill_01",
+						nextId = "q3_start",
+					},
+				},
+			},
+
+			["q3_start"] = {
+				text = "Now, Cultivate to Foundation Establishment I to Unlock the Waterfall Cultivation Area (2x Boost).",
+				options = {
+					{
+						order = 1,
+						label = "Okay.",
+						action = "AcceptQuest",
+						actionParam = "Cultivate_02",
+						nextId = nil,
+					},
+					{
+						order = 2,
+						label = "Maybe later.",
+						nextId = nil,
+					},
+				},
+			},
+			["q3_in_progress"] = {
+				text = "Why are you back? GO CULTIVATE AGAIN!",
+				options = {
+					{
+						order = 1,
+						label = "I'm on it.",
+						nextId = nil,
+					},
+				},
+			},
+			["q3_claim"] = {
+				text = "Not bad. Here is your reward.",
+				options = {
+					{
+						order = 1,
+						label = "Claim Reward",
+						action = "CompleteQuest",
+						actionParam = "Cultivate_02",
 						nextId = nil,
 					},
 				},
@@ -217,14 +265,14 @@ NPCServiceUtils.Data = {
 				options = {
 					{
 						order = 1,
-						label = "Of course!!",
+						label = "Open Shop.",
 						action = "OpenShop",
 						actionParam = "JimShop",
 						nextId = nil,
 					},
 					{
 						order = 2,
-						label = "Hell nah",
+						label = "Nah",
 						nextId = nil,
 					},
 				},
