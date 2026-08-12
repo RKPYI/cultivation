@@ -10,6 +10,7 @@ local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
 local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
+local Leaderboard = require(ReplicatedStorage.UI.views.Leaderboard)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
 local NPCShop = require(ReplicatedStorage.UI.views.NPCShop)
 local QiDisplay = require(ReplicatedStorage.UI.views.QiDisplay)
@@ -46,6 +47,10 @@ local function RootUI()
 
 		if activeModal == "Inventory" then
 			return e(Inventory)
+		end
+
+		if activeModal == "Leaderboard" then
+			return e(Leaderboard)
 		end
 
 		if activeModal == "NPCShop" then
@@ -103,7 +108,7 @@ local function RootUI()
 			text = activeShop and NPCServiceUtils.Shops[activeShop].shopName or activeModal,
 			onClose = handleClose,
 			children = renderModalContent(),
-			background = activeShop and NPCServiceUtils.Shops[activeShop].background or "rbxassetid://138496797110912",
+			background = activeShop and NPCServiceUtils.Shops[activeShop].background or (activeModal == "Leaderboard" and "rbxassetid://111352527979251" or "rbxassetid://138496797110912"),
 		}),
 
 		Quest = e(Quest),

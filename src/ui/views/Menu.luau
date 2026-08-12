@@ -55,10 +55,18 @@ local function Menu(props: menuProps)
 				props.onOpenMenu("Shop")
 			end,
 		}),
+		Leaderboard = e(MenuButton, {
+			text = "Leaderboard",
+			iconImage = "rbxassetid://74583215368203",
+			layoutOrder = 2,
+			onClick = function()
+				props.onOpenMenu("Leaderboard")
+			end,
+		}),
 		Inventory = e(MenuButton, {
 			text = "Inventory",
 			iconImage = "rbxassetid://98519268429528",
-			layoutOrder = 2,
+			layoutOrder = 3,
 			onClick = function()
 				props.onOpenMenu("Inventory")
 
