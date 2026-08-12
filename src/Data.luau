@@ -45,5 +45,5 @@ local template = {
 return DataServiceTyped({
 	template = template,
 	-- resetData = true,
-	useMock = true,
+	-- useMock = true,
 })
