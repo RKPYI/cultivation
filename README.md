@@ -19,7 +19,7 @@ A Roblox Incremental where players cultivate, kill mobs, collect spiritual stone
 - Zones with higher Qi density
 - Items to help cultivate
 
---
+---
 
 ## Credits
 - Rojo & Wally -- Modern Lua developer tooling.
