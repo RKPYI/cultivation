@@ -12,6 +12,8 @@ local template = {
 
 	walkspeed = 16,
 	sprintspeed = 24,
+	jumpheight = 7.2,
+
 	settings = {
 		music = true,
 		sfx = true,

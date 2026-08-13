@@ -32,6 +32,31 @@ export type RealmServiceServer = typeof(setmetatable({} :: State, { __index = {}
 
 local RealmServiceServer = {} :: RealmServiceServer
 
+-- SHOULD BE MOVED TO UserInputService or whatever more related to the humanoid
+local function recalculateSpeed(player: Player, realm: number)
+	local newWalkspeed = 16 + (realm / 2)
+	local newSprintspeed = newWalkspeed * 1.5
+	local baseJumpheight = 7.2
+	if realm > 100 then
+		baseJumpheight *= (realm - 100) + 1
+	end
+	local newJumpheight = baseJumpheight + (realm / 10)
+
+	Data[player].walkspeed(newWalkspeed)
+	Data[player].sprintspeed(newSprintspeed)
+	Data[player].jumpheight(newJumpheight)
+
+	if player.Character then
+		local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
+		if not humanoid then
+			return
+		end
+
+		humanoid.WalkSpeed = newWalkspeed
+		humanoid.JumpHeight = newJumpheight
+	end
+end
+
 -- Setup
 function RealmServiceServer.init(self: RealmServiceServer)
 	self.playerRealmData = {}
@@ -68,6 +93,11 @@ function RealmServiceServer.OnPlayerAdded(self: RealmServiceServer, player: Play
 
 		self:SetRealmState(player)
 		self:UpdateWalkspeed(player)
+
+		player.CharacterAdded:Connect(function(char)
+			local currentRealm = Data[player].realm()
+			recalculateSpeed(player, currentRealm)
+		end)
 	end)
 end
 
@@ -105,30 +135,6 @@ end
 function RealmServiceServer.GetRealmData(self, player)
 	local data = self.playerRealmData[player] :: { realmName: string, qiReq: BigNum.BN }
 	return data
-end
-
--- SHOULD BE MOVED TO UserInputService or whatever more related to the humanoid
-local function recalculateSpeed(player: Player, realm: number)
-	local newWalkspeed = 16 + (realm / 2)
-	local newSprintspeed = newWalkspeed * 1.5
-
-	Data[player].walkspeed(newWalkspeed)
-	Data[player].sprintspeed(newSprintspeed)
-
-	if player.Character then
-		local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
-		if not humanoid then
-			return
-		end
-
-		humanoid.WalkSpeed = newWalkspeed
-
-		local baseJumpHeight = 7.2
-		if realm > 100 then
-			baseJumpHeight = baseJumpHeight * ((realm - 100) + 1)
-		end
-		humanoid.JumpHeight = baseJumpHeight + (realm / 10)
-	end
 end
 
 function RealmServiceServer.UpdateWalkspeed(self, player)
