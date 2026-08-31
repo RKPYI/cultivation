@@ -5,7 +5,7 @@ local BigNum = require(ReplicatedStorage.Shared.BigNum)
 
 local template = {
 	qi = BigNum.fromNumber(0),
-	spiritualStones = BigNum.fromNumber(0),
+	spiritualStones = BigNum.fromNumber(1000000),
 	realm = 1,
 	spiritualRoot = "Common",
 	rebirth = 0,
@@ -47,5 +47,5 @@ local template = {
 return DataServiceTyped({
 	template = template,
 	-- resetData = true,
-	-- useMock = true,
+	useMock = true,
 })

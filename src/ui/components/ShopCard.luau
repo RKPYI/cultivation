@@ -20,7 +20,7 @@ local function ShopCard(props: ShopCardProps)
 	local haveItem, setHaveItem = React.useState(table.find(Data.inventory.item(), props.itemId) ~= nil)
 	local canAfford, setCanAfford = React.useState(BigNum.gte(Data.spiritualStones(), info.price or 0))
 	local meetsRealm, setMeetsRealm = React.useState(Data.realm() >= info.realmReq)
-	local canBuy = canAfford and meetsRealm and not haveItem
+	local canBuy = canAfford and not haveItem
 
 	local statBoosts = {}
 	if info.qiMultiplier then
@@ -39,10 +39,8 @@ local function ShopCard(props: ShopCardProps)
 			return "OWNED"
 		elseif canBuy then
 			return "BUY"
-		elseif meetsRealm then
-			return "TOO EXPENSIVE"
 		else
-			return "LOCKED"
+			return "TOO EXPENSIVE"
 		end
 	end
 

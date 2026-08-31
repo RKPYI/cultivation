@@ -112,9 +112,6 @@ function ItemServiceServer.buyItem(self, player, itemId)
 
 	-- ALL OF THIS COULD BE CHANGED IN THE FUTURE WHEN THERES MULTIPLE CURRENCY AND MULTIPLE ITEM TYPE (WEAPON, ITEM, AURA, ETC.)
 	local itemData = ItemServiceUtils.Data[itemId]
-	if Data[player].realm() < itemData.realmReq then
-		return
-	end
 	local playerItems = Data[player].inventory.item()
 	if table.find(playerItems, itemId) ~= nil then
 		return
