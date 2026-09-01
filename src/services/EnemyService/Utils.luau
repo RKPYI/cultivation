@@ -34,6 +34,17 @@ Enemy.Data = {
 		maxHealth = 10,
 		respawnTime = 10,
 	},
+	["goblin"] = {
+		id = "goblin",
+		name = "Goblin",
+		realm = 10,
+		maxHealth = 20,
+		respawnTime = 10,
+
+		drops = {
+			spiritualStone = BigNum.fromNumber(100),
+		},
+	},
 } :: { [string]: EnemyConfig }
 
 function Enemy.GiveDrops(enemyId)
