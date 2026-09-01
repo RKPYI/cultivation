@@ -38,7 +38,7 @@ QuestServiceUtils.Data = {
 	},
 
 	["Cultivate_02"] = {
-		id = "Cultivate_01",
+		id = "Cultivate_02",
 		title = "Journey Begins (3)",
 		description = "Reach Foundation Establishment I to prove your worth.",
 		questType = "ReachRealm",
