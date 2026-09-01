@@ -16,8 +16,8 @@ function LeaderboardServiceClient.getLeaderboards(self)
 	return networker:fetch("getLeaderboards")
 end
 
-function LeaderboardServiceClient.leaderboardUpdated(self, key: string, data: any)
-	self.OnUpdated:Fire(key, data)
+function LeaderboardServiceClient.leaderboardUpdated(self, key: string, data: any, nextUpdate: number)
+	self.OnUpdated:Fire(key, data, nextUpdate)
 end
 
 return LeaderboardServiceClient

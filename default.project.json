@@ -26,6 +26,9 @@
             "$className": "Folder",
             "LeaderboardServiceClient": {
               "$path": "src/services/LeaderboardService/Client.luau"
+            },
+            "LeaderboardServiceUtils": {
+              "$path": "src/services/LeaderboardService/Utils.luau"
             }
           },
           "NPCService": {

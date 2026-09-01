@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local LeaderboardServiceClient = require(ReplicatedStorage.Shared.Services.LeaderboardService.LeaderboardServiceClient)
+local CountdownTimer = require(ReplicatedStorage.UI.components.CountdownTimer)
 local Text = require(ReplicatedStorage.UI.components.Text)
 local e = React.createElement
 
@@ -18,22 +19,34 @@ type LeaderboardEntry = {
 
 local function Leaderboard(props: LeaderboardProps)
 	local leaderboard, setLeaderboards = React.useState({ qi = {}, spiritStone = {}, realm = {} })
+	local nextUpdate, setNextUpdate = React.useState(os.time() + 120) -- NOT DYNAMIC but its ok its just placeholder
 
 	React.useEffect(function()
 		task.spawn(function()
-			local initData = LeaderboardServiceClient:getLeaderboards()
-			if initData then
-				setLeaderboards(initData)
+			local response = LeaderboardServiceClient:getLeaderboards()
+			if response then
+				if response.data then
+					setLeaderboards(response.data)
+				end
+				if response.nextUpdate then
+					setNextUpdate(response.nextUpdate)
+				end
 			end
 		end)
 
-		local conn = LeaderboardServiceClient.OnUpdated:Connect(function(key: string, updatedData: any)
-			setLeaderboards(function(prev)
-				local updated = table.clone(prev)
-				updated[key] = updatedData
-				return updated
-			end)
-		end)
+		local conn = LeaderboardServiceClient.OnUpdated:Connect(
+			function(key: string, updatedData: any, newNextUpdated: number?)
+				setLeaderboards(function(prev)
+					local updated = table.clone(prev)
+					updated[key] = updatedData
+					return updated
+				end)
+
+				if newNextUpdated then
+					setNextUpdate(newNextUpdated)
+				end
+			end
+		)
 
 		return function()
 			conn:Disconnect()
@@ -84,8 +97,11 @@ local function Leaderboard(props: LeaderboardProps)
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 	}, {
+		Timer = e(CountdownTimer, {
+			targetTime = nextUpdate,
+		}),
 		ListContainer = e("ScrollingFrame", {
-			Size = UDim2.new(1, -16, 1, -55),
+			Size = UDim2.new(1, -16, 0.95, -55),
 			Position = UDim2.fromOffset(8, 48),
 			BackgroundTransparency = 1,
 			AutomaticCanvasSize = Enum.AutomaticSize.Y,

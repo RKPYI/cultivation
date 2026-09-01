@@ -10,6 +10,8 @@ local Data = require(ReplicatedStorage.Shared.Data).server
 
 type State = {
 	cache: { [string]: {} },
+	lastUpdated: number,
+	nextUpdate: number,
 }
 
 export type LeaderboardServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -38,6 +40,8 @@ local LeaderboardServiceServer = {} :: LeaderboardServiceServer
 -- Setup
 function LeaderboardServiceServer.init(self: LeaderboardServiceServer)
 	self.cache = { qi = {} }
+	self.lastUpdated = os.time()
+	self.nextUpdate = os.time() + UPDATE_INTERVAL
 
 	self.networker = Networker.server.new(
 		"LeaderboardService",
@@ -59,7 +63,10 @@ end
 function LeaderboardServiceServer.getLeaderboards(self)
 	print("GETLEADERBOARDS")
 
-	return self.cache
+	return {
+		data = self.cache,
+		nextUpdate = self.nextUpdate,
+	}
 end
 
 function LeaderboardServiceServer.updatePlayers()
@@ -98,6 +105,9 @@ end
 
 function LeaderboardServiceServer.update(self)
 	self:updatePlayers()
+
+	self.lastUpdated = os.time()
+	self.nextUpdate = self.lastUpdated + UPDATE_INTERVAL
 
 	for key, store in dataStores do
 		local success, pages = pcall(function()
@@ -139,7 +149,7 @@ function LeaderboardServiceServer.update(self)
 		end
 
 		self.cache[key] = leaderboardData
-		self.networker:fireAll("leaderboardUpdated", key, leaderboardData)
+		self.networker:fireAll("leaderboardUpdated", key, leaderboardData, self.nextUpdate)
 	end
 end
 
