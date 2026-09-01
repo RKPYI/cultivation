@@ -81,7 +81,7 @@ function EnemyServiceServer.start(self: EnemyServiceServer)
 end
 
 function EnemyServiceServer.SetEnemyState(self, player, enemyModel, isAlive)
-	local billboardGui = enemyModel:WaitForChild("BillboardGui") :: BillboardGui
+	local billboardGui = enemyModel:FindFirstChild("BillboardGui", true) :: BillboardGui
 	if billboardGui then
 		billboardGui.Enabled = isAlive
 	end
@@ -192,7 +192,7 @@ function EnemyServiceServer.UpdateEnemyGui(self, player, enemyIdModel)
 		return
 	end
 
-	local billboardGui = EnemyModel:WaitForChild("BillboardGui") :: BillboardGui
+	local billboardGui = EnemyModel:FindFirstChild("BillboardGui", true) :: BillboardGui
 	if not billboardGui then
 		return
 	end
@@ -228,7 +228,7 @@ function EnemyServiceServer.SetupEnemyListener(self)
 		end
 
 		for _, EnemyModel in EnemyFolder:GetChildren() do
-			local billboardGui = EnemyModel:WaitForChild("BillboardGui") :: BillboardGui
+			local billboardGui = EnemyModel:FindFirstChild("BillboardGui", true) :: BillboardGui
 			if not billboardGui then
 				continue
 			end
