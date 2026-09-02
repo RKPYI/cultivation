@@ -26,7 +26,7 @@ local function DialogueOptions(props: OptionProps)
 			return Color3.fromRGB(44, 188, 0)
 		end
 
-		if opt.action == "CompleteQuest" then
+		if opt.action == "CompleteQuest" or "CompleteRepeatableQuest" then
 			return Color3.fromRGB(255, 255, 0)
 		end
 
@@ -44,7 +44,7 @@ local function DialogueOptions(props: OptionProps)
 			if option.action == "AcceptQuest" then
 				SoundServiceUtils.playAcceptQuest()
 			end
-			if option.action == "CompleteQuest" then
+			if option.action == "CompleteQuest" or "CompleteRepeatableQuest" then
 				SoundServiceUtils.playCompleteQuest()
 			end
 

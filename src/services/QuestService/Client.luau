@@ -19,4 +19,8 @@ function QuestServiceClient.CompleteQuest(self, questId: string)
 	networker:fire("CompleteQuest", questId)
 end
 
+function QuestServiceClient.CompleteRepeatableQuest(self, questId: string)
+	networker:fire("CompleteRepeatableQuest", questId)
+end
+
 return QuestServiceClient

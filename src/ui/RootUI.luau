@@ -108,7 +108,8 @@ local function RootUI()
 			text = activeShop and NPCServiceUtils.Shops[activeShop].shopName or activeModal,
 			onClose = handleClose,
 			children = renderModalContent(),
-			background = activeShop and NPCServiceUtils.Shops[activeShop].background or (activeModal == "Leaderboard" and "rbxassetid://111352527979251" or "rbxassetid://138496797110912"),
+			background = activeShop and NPCServiceUtils.Shops[activeShop].background
+				or (activeModal == "Leaderboard" and "rbxassetid://111352527979251" or "rbxassetid://138496797110912"),
 		}),
 
 		Quest = e(Quest),
@@ -129,6 +130,9 @@ local function RootUI()
 				end
 				if action == "CompleteQuest" and param then
 					QuestServiceClient:CompleteQuest(param)
+				end
+				if action == "CompleteRepeatableQuest" and param then
+					QuestServiceClient:CompleteRepeatableQuest(param)
 				end
 				if action == "OpenShop" and param then
 					setActiveNPC(nil)

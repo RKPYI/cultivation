@@ -254,6 +254,61 @@ NPCServiceUtils.Data = {
 		},
 	} :: NPCConfig,
 
+	["GoblinSlayer"] = {
+		name = "The Goblin Hater",
+		title = "Goblin Slayer",
+		initialNode = function(quests)
+			if quests.active["Kill_Goblin_Repeatable"] then
+				return quests.active["Kill_Goblin_Repeatable"].isCompleted and "goblin_claim" or "goblin_in_progress"
+			end
+
+			-- Always available because its repeatable
+			return "goblin_start"
+		end,
+
+		dialogues = {
+			["goblin_start"] = {
+				text = "The goblins are attacking our supply routes again! Eliminate 10 Goblins and I will make it worth your while.",
+				options = {
+					{
+						order = 1,
+						label = "Accept Hunt (Kill 10 Goblins)",
+						action = "AcceptQuest",
+						actionParam = "Kill_Goblin_Repeatable",
+						nextId = nil,
+					},
+					{
+						order = 2,
+						label = "I am not ready.",
+						nextId = nil,
+					},
+				},
+			},
+			["goblin_in_progress"] = {
+				text = "What are you doing here? There are still goblins lurking outside!",
+				options = {
+					{
+						order = 1,
+						label = "On my way!",
+						nextId = nil,
+					},
+				},
+			},
+			["goblin_claim"] = {
+				text = "Outstanding work! You've thinned their ranks. Take your reward, and report back if you want to hunt more.",
+				options = {
+					{
+						order = 1,
+						label = "Claim Reward",
+						action = "CompleteRepeatableQuest", --CompleteRepeatableQuest
+						actionParam = "Kill_Goblin_Repeatable",
+						nextId = nil,
+					},
+				},
+			},
+		},
+	} :: NPCConfig,
+
 	["Shopkeeper"] = {
 		name = "Jim",
 		title = "Shopkeeper",

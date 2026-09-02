@@ -1,7 +1,9 @@
 --!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 
+local EnemyServiceServer = require(ServerScriptService.Services.EnemyService.EnemyServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
@@ -27,6 +29,8 @@ export type QuestServiceServer = typeof(setmetatable({} :: State, { __index = {}
 
 	AcceptQuest: (self: QuestServiceServer, player: Player, questId: string) -> (),
 	CompleteQuest: (self: QuestServiceServer, player: Player, questId: string) -> (),
+	CompleteRepeatableQuest: (self: QuestServiceServer, player: Player, questId: string) -> (),
+	OnEnemyKilled: (self: QuestServiceServer, player: Player, enemyId: string, amount: number?) -> (),
 	RealmListener: (self: QuestServiceServer, player: Player) -> (),
 	EnemyListener: (self: QuestServiceServer, player: Player) -> (),
 
@@ -47,6 +51,7 @@ function QuestServiceServer.init(self: QuestServiceServer)
 		{
 			self.AcceptQuest,
 			self.CompleteQuest,
+			self.CompleteRepeatableQuest,
 			-- Add public network
 		} :: any
 	)
@@ -81,7 +86,11 @@ function QuestServiceServer.OnPlayerRemoving(self: QuestServiceServer, player: P
 	self.playerQuests[player] = nil
 end
 
-function QuestServiceServer.start(self: QuestServiceServer) end
+function QuestServiceServer.start(self: QuestServiceServer)
+	EnemyServiceServer.onEnemyKilled:Connect(function(player: Player, enemyId: string)
+		self:OnEnemyKilled(player, enemyId)
+	end)
+end
 
 function QuestServiceServer.AcceptQuest(self: QuestServiceServer, player: Player, questId: string)
 	local playerData = Data[player]
@@ -108,6 +117,10 @@ function QuestServiceServer.AcceptQuest(self: QuestServiceServer, player: Player
 
 		if questConfig.questType == "ReachRealm" then
 			startingAmount = currentRealm
+		end
+
+		if questConfig.questType == "KillEnemy" then
+			startingAmount = 0
 		end
 
 		if questConfig.questType == "TotalKillEnemy" then
@@ -175,6 +188,51 @@ function QuestServiceServer.CompleteQuest(self: QuestServiceServer, player: Play
 			return true
 		end)
 	end
+end
+
+function QuestServiceServer.CompleteRepeatableQuest(self: QuestServiceServer, player: Player, questId: string)
+	self:CompleteQuest(player, questId)
+
+	Data[player].quests.completed(function(currentCompletedQuests)
+		local updated = table.clone(currentCompletedQuests)
+
+		updated[questId] = nil
+
+		return updated
+	end)
+end
+
+function QuestServiceServer.OnEnemyKilled(self: QuestServiceServer, player: Player, enemyType: string, amount: number?)
+	local PlayerData = Data[player]
+	if not PlayerData then
+		return
+	end
+
+	local killAmount = amount or 1
+
+	Data[player].quests.active(function(currentQuests)
+		local updated = table.clone(currentQuests)
+		local updatedAny = false
+
+		for questId, progress in updated do
+			local config = QuestServiceUtils.Data[questId]
+			if config and config.questType == "KillEnemy" and not progress.isCompleted then
+				if config.targetValue == enemyType then
+					local progressCopy = table.clone(progress)
+					progressCopy.currentAmount = math.min(progressCopy.currentAmount + killAmount, config.targetAmount)
+
+					if progressCopy.currentAmount >= config.targetAmount then
+						progressCopy.isCompleted = true
+					end
+
+					updated[questId] = progressCopy
+					updatedAny = true
+				end
+			end
+		end
+
+		return updatedAny and updated or currentQuests
+	end)
 end
 
 function QuestServiceServer.RealmListener(self: QuestServiceServer, player: Player)

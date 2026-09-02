@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local EnemyServiceUtils = require(ReplicatedStorage.Shared.Services.EnemyService.EnemyServiceUtils)
 local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
@@ -15,6 +16,7 @@ local EnemiesFolder = workspace:WaitForChild("Enemies") :: Folder
 type State = {
 	isTouching: { [Player]: { [string]: { [string]: boolean } } },
 	attackThreads: { [Player]: { [string]: { [string]: thread } } },
+	onEnemyKilled: any, -- Signal
 }
 
 export type EnemyServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -39,6 +41,8 @@ local EnemyServiceServer = {} :: EnemyServiceServer
 function EnemyServiceServer.init(self: EnemyServiceServer)
 	self.isTouching = {}
 	self.attackThreads = {}
+	self.onEnemyKilled = Signal.new()
+
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
 		"EnemyService",
@@ -153,6 +157,9 @@ function EnemyServiceServer.AttackEnemy(self, player, enemyIdModel)
 	self:UpdateEnemyGui(player, enemyIdModel)
 
 	if newHealth <= 0 then
+		print("Enemy Killed: " .. enemyId)
+		self.onEnemyKilled:Fire(player, enemyId)
+
 		Data[player].totalEnemyKilled[enemyId](function(currentNumber: number)
 			local updated = (currentNumber or 0) + 1
 			return updated

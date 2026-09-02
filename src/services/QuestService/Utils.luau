@@ -62,6 +62,19 @@ QuestServiceUtils.Data = {
 			item = "book2",
 		},
 	},
+
+	["Kill_Goblin_Repeatable"] = {
+		id = "Kill_Goblin_Repeatable",
+		title = "Goblin Outbreak",
+		description = "Defeat 10 Goblins terrorizing the forest.",
+		questType = "KillEnemy",
+		targetValue = "goblin",
+		targetAmount = 1,
+		rewards = {
+			spiritualStones = BigNum.fromNumber(1000),
+			-- item = "goblin_ear",
+		},
+	},
 	-- Add more quest for hunting, herb collection
 } :: { [string]: QuestConfig }
 
