@@ -9,6 +9,9 @@
           "$className": "Folder",
           "EnemyService": {
             "$className": "Folder",
+            "EnemyServiceClient": {
+              "$path": "src/services/EnemyService/Client.luau"
+            },
             "EnemyServiceUtils": {
               "$path": "src/services/EnemyService/Utils.luau"
             }

@@ -27,7 +27,6 @@ export type EnemyServiceServer = typeof(setmetatable({} :: State, { __index = {}
 
 	SetEnemyState: (self: EnemyServiceServer, player: Player, enemyMode: Model, isAlive: boolean) -> (),
 	AttackEnemy: (self: EnemyServiceServer, player: Player, enemyIdModel: { string }) -> (),
-	UpdateEnemyGui: (self: EnemyServiceServer, player: Player, enemyIdModel: { string }) -> (),
 	SetupEnemyListener: (self: EnemyServiceServer) -> (),
 	-- ... Add More Functions Here
 
@@ -154,7 +153,6 @@ function EnemyServiceServer.AttackEnemy(self, player, enemyIdModel)
 
 	local newHealth = math.max(0, currentHealth - dmg)
 	EnemyModel:SetAttribute("health", newHealth)
-	self:UpdateEnemyGui(player, enemyIdModel)
 
 	if newHealth <= 0 then
 		print("Enemy Killed: " .. enemyId)
@@ -175,52 +173,12 @@ function EnemyServiceServer.AttackEnemy(self, player, enemyIdModel)
 		-- respawn
 		task.delay(enemyData.respawnTime, function()
 			EnemyModel:SetAttribute("health", enemyData.maxHealth)
-			self:UpdateEnemyGui(player, enemyIdModel)
 
 			self:SetEnemyState(player, EnemyModel, true)
 		end)
 
 		return
 	end
-end
-
-function EnemyServiceServer.UpdateEnemyGui(self, player, enemyIdModel)
-	local enemyId, enemyModelName = enemyIdModel[1], enemyIdModel[2]
-	local EnemyFolder = EnemiesFolder:FindFirstChild(enemyId) :: Folder
-	if not EnemyFolder then
-		return
-	end
-	local EnemyModel = EnemyFolder:WaitForChild(enemyModelName, 3)
-	if not EnemyModel then
-		return
-	end
-	local enemyData = EnemyServiceUtils.Data[EnemyFolder.Name]
-	if not enemyData then
-		return
-	end
-
-	local billboardGui = EnemyModel:FindFirstChild("BillboardGui", true) :: BillboardGui
-	if not billboardGui then
-		return
-	end
-
-	-- HEALTH BAR & TEXT
-	local HealthFrame = billboardGui:WaitForChild("Health") :: Frame
-	if not HealthFrame then
-		return
-	end
-	local HealthLabel = HealthFrame:WaitForChild("HealthLabel") :: TextLabel
-	if not HealthLabel then
-		return
-	end
-	local currentHealth = EnemyModel:GetAttribute("health") :: number? or enemyData.maxHealth
-	HealthLabel.Text = string.format("%.1f", currentHealth) .. "/" .. enemyData.maxHealth
-
-	local HealthBar = HealthFrame:WaitForChild("currentHealth") :: Frame
-	if not HealthBar then
-		return
-	end
-	HealthBar.Size = UDim2.fromScale(currentHealth / enemyData.maxHealth, 1)
 end
 
 function EnemyServiceServer.SetupEnemyListener(self)
@@ -235,34 +193,10 @@ function EnemyServiceServer.SetupEnemyListener(self)
 		end
 
 		for _, EnemyModel in EnemyFolder:GetChildren() do
-			local billboardGui = EnemyModel:FindFirstChild("BillboardGui", true) :: BillboardGui
-			if not billboardGui then
-				continue
-			end
-
 			local collisionPart = EnemyModel:WaitForChild("Collision") :: Part
 			if not collisionPart then
 				continue
 			end
-
-			-- HEALTH TEXT
-			local HealthFrame = billboardGui:WaitForChild("Health") :: Frame
-			if not HealthFrame then
-				continue
-			end
-			local HealthLabel = HealthFrame:WaitForChild("HealthLabel") :: TextLabel
-			if not HealthLabel then
-				continue
-			end
-			local Health = EnemyModel:GetAttribute("health") :: number? or enemyData.maxHealth
-			HealthLabel.Text = Health .. "/" .. enemyData.maxHealth
-
-			-- NAME & REALM LABEL
-			local NameLabel = billboardGui:WaitForChild("Data"):WaitForChild("Name") :: TextLabel
-			if not NameLabel then
-				continue
-			end
-			NameLabel.Text = enemyData.name .. " - " .. RealmServiceUtils.RealmName(enemyData.realm)
 
 			local visualsFolder = EnemyModel:FindFirstChild("Visuals")
 			if visualsFolder then
