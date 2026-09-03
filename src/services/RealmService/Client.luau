@@ -54,6 +54,7 @@ end
 function RealmServiceClient.initRealmBoard(self)
 	local Realms = RealmServiceUtils.Name
 	local Board = workspace
+		:FindFirstChild("Map")
 		:FindFirstChild("RealmList")
 		:FindFirstChild("Board")
 		:FindFirstChild("SurfaceGui")

@@ -42,6 +42,8 @@ local template = {
 	},
 
 	totalEnemyKilled = {} :: { [string]: number }, -- [string] = Enemy id, number = amount of enemy killed
+
+	tutorialStep = 1,
 }
 
 return DataServiceTyped({

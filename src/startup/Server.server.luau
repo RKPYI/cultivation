@@ -10,6 +10,7 @@ local QiServiceServer = require(ServerScriptService.Services.QiService.QiService
 local QuestServiceServer = require(ServerScriptService.Services.QuestService.QuestServiceServer)
 local RealmServiceServer = require(ServerScriptService.Services.RealmService.RealmServiceServer)
 local SettingServiceServer = require(ServerScriptService.Services.SettingService.SettingServiceServer)
+local TutorialServiceServer = require(ServerScriptService.Services.TutorialService.TutorialServiceServer)
 local UIServiceServer = require(ServerScriptService.Services.UIService.UIServiceServer)
 local ZoneServiceServer = require(ServerScriptService.Services.ZoneService.ZoneServiceServer)
 local Data = require(ReplicatedStorage.Shared.Data).server
@@ -24,6 +25,7 @@ SettingServiceServer:init()
 QuestServiceServer:init()
 EnemyServiceServer:init()
 LeaderboardServiceServer:init()
+TutorialServiceServer:init()
 
 ZoneServiceServer:start()
 QiServiceServer:start()

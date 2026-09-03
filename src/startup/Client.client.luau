@@ -11,6 +11,7 @@ local QuestServiceClient = require(ReplicatedStorage.Shared.Services.QuestServic
 local RealmServiceClient = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceClient)
 local SettingServiceClient = require(ReplicatedStorage.Shared.Services.SettingService.SettingServiceClient)
 local SoundServiceClient = require(ReplicatedStorage.Shared.Services.SoundService.SoundServiceClient)
+local TutorialServiceClient = require(ReplicatedStorage.Shared.Services.TutorialService.TutorialServiceClient)
 local UserInputServiceClient = require(ReplicatedStorage.Shared.Services.UserInputService.UserInputServiceClient)
 local ZoneServiceClient = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceClient)
 
@@ -27,6 +28,7 @@ NPCServiceClient:init()
 QuestServiceClient:init()
 LeaderboardServiceClient:init()
 EnemyServiceClient:init()
+TutorialServiceClient:init()
 
 MountUI()
 

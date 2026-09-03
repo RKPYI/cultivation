@@ -17,9 +17,12 @@ type TextProps = {
 	textSize: number?,
 	maxTextSize: number?,
 	richText: boolean?,
+	bgColor3: Color3?,
+	bgTransparency: number?,
 
 	ref: React.Ref<TextLabel>?,
 	scaleRef: React.Ref<TextLabel>?,
+	children: React.ReactNode?,
 }
 
 local function Text(props: TextProps)
@@ -34,10 +37,13 @@ local function Text(props: TextProps)
 	local zIndex = props.zIndex or 1
 	local maxTextSize = props.maxTextSize or 500
 	local richText = if props.richText ~= nil then props.richText else false
+	local bgColor3 = props.bgColor3 or Color3.fromRGB(255, 255, 255)
+	local bgTransparency = props.bgTransparency or 1
 	return e("TextLabel", {
 		ref = props.ref,
 		AnchorPoint = anchorPoint,
-		BackgroundTransparency = 1,
+		BackgroundColor3 = bgColor3,
+		BackgroundTransparency = bgTransparency,
 		TextScaled = if props.textSize then false else true,
 		TextSize = props.textSize,
 		TextXAlignment = textXAlignment,
@@ -60,6 +66,8 @@ local function Text(props: TextProps)
 		UITextSizeConstraint = e("UITextSizeConstraint", {
 			MaxTextSize = maxTextSize,
 		}),
+
+		children = props.children,
 	})
 end
 

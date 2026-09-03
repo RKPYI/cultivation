@@ -85,6 +85,15 @@
               "$path": "src/services/SoundService/Utils.luau"
             }
           },
+          "TutorialService": {
+            "$className": "Folder",
+            "TutorialServiceClient": {
+              "$path": "src/services/TutorialService/Client.luau"
+            },
+            "TutorialServiceUtils": {
+              "$path": "src/services/TutorialService/Utils.luau"
+            }
+          },
           "UserInputService": {
             "$className": "Folder",
             "UserInputServiceClient": {
@@ -121,6 +130,9 @@
         },
         "Roman": {
           "$path": "src/Roman.luau"
+        },
+        "TutorialBeamManager": {
+          "$path": "src/TutorialBeamManager.luau"
         }
       },
       "Packages": {
@@ -188,6 +200,12 @@
           "$className": "Folder",
           "SettingServiceServer": {
             "$path": "src/services/SettingService/Server.luau"
+          }
+        },
+        "TutorialService": {
+          "$className": "Folder",
+          "TutorialServiceServer": {
+            "$path": "src/services/TutorialService/Server.luau"
           }
         },
         "UIService": {

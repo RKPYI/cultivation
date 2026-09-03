@@ -1,9 +1,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local Data = require(ReplicatedStorage.Shared.Data).client
 local NPCServiceClient = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceClient)
 local NPCServiceUtils = require(ReplicatedStorage.Shared.Services.NPCService.NPCServiceUtils)
 local QuestServiceClient = require(ReplicatedStorage.Shared.Services.QuestService.QuestServiceClient)
+local TutorialServiceUtils = require(ReplicatedStorage.Shared.Services.TutorialService.TutorialServiceUtils)
 local ZoneServiceClient = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceClient)
 local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
@@ -13,6 +15,7 @@ local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Leaderboard = require(ReplicatedStorage.UI.views.Leaderboard)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
 local NPCShop = require(ReplicatedStorage.UI.views.NPCShop)
+local Onboarding = require(ReplicatedStorage.UI.views.Onboarding)
 local QiDisplay = require(ReplicatedStorage.UI.views.QiDisplay)
 local Quest = require(ReplicatedStorage.UI.views.Quest)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
@@ -92,6 +95,18 @@ local function RootUI()
 		end
 	end, {})
 
+	local step, setStep = React.useState(Data.tutorialStep() or 1)
+	local tutorialFinished = step > TutorialServiceUtils.MAX_STEPS
+	React.useEffect(function()
+		local conn = Data.tutorialStep.Changed(function(newStep)
+			setStep(newStep)
+		end)
+
+		return function()
+			conn()
+		end
+	end, {})
+
 	return e(React.Fragment, nil, {
 		currencyCounter = e(Counter, {
 			qi = "qi",
@@ -143,6 +158,8 @@ local function RootUI()
 				end
 			end,
 		}),
+
+		Onboarding = not tutorialFinished and e(Onboarding),
 	})
 end
 

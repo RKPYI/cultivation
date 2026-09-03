@@ -27,6 +27,7 @@ export type LeaderboardServiceServer = typeof(setmetatable({} :: State, { __inde
 }
 
 local UPDATE_INTERVAL = 120
+-- local PREFIX = "v1_release_" -- v1_testing_, v1_mock_, v1_release_
 local PREFIX = "v1_mock_" -- v1_testing_, v1_mock_, v1_release_
 
 local dataStores: { [string]: OrderedDataStore } = {
