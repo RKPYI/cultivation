@@ -63,6 +63,18 @@ QuestServiceUtils.Data = {
 		},
 	},
 
+	["Kill_02"] = {
+		id = "Kill_02",
+		title = "Journey Begins (4)",
+		description = "Kill Total 10 Goblins to finish the quest.",
+		questType = "TotalKillEnemy",
+		targetValue = "goblin",
+		targetAmount = 10,
+		rewards = {
+			spiritualStones = BigNum.fromNumber(1500),
+		},
+	},
+
 	["Kill_Goblin_Repeatable"] = {
 		id = "Kill_Goblin_Repeatable",
 		title = "Goblin Outbreak",

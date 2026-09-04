@@ -29,6 +29,14 @@ export type Shop = {
 	items: { string },
 }
 
+export type QuestChain = {
+	id: string,
+	startText: string,
+	progressText: string,
+	claimText: string,
+	nextId: string?,
+}
+
 local NPCServiceUtils = {}
 
 function NPCServiceUtils.getNPCQuestState(npcConfig: NPCConfig, questData): QuestMarkState
@@ -88,171 +96,92 @@ NPCServiceUtils.Shops = {
 	},
 } :: { [string]: Shop }
 
-NPCServiceUtils.Data = {
-	["???"] = {
-		name = "Mysterious Being",
-		title = "???",
+local function createQuestChainNPC(name: string, title: string, questChain: { QuestChain }): NPCConfig
+	local dialogues = {}
+
+	for i, quest in questChain do
+		local startNode = "q" .. i .. "_start"
+		local progressNode = "q" .. i .. "_in_progress"
+		local claimNode = "q" .. i .. "_claim"
+		local nextStartNode = if i < #questChain then "q" .. (i + 1) .. "_start" else nil
+
+		dialogues[startNode] = {
+			text = quest.startText,
+			options = {
+				{ order = 1, label = "Accept", action = "AcceptQuest", actionParam = quest.id },
+				{ order = 2, label = "Maybe later...", nextId = nil },
+			},
+		}
+		dialogues[progressNode] = {
+			text = quest.progressText,
+			options = { { order = 1, label = "I'm on it.", nextId = nil } },
+		}
+		dialogues[claimNode] = {
+			text = quest.claimText,
+			options = {
+				{
+					order = 1,
+					label = "Claim Reward",
+					action = "CompleteQuest",
+					actionParam = quest.id,
+					nextId = nextStartNode,
+				},
+			},
+		}
+	end
+
+	dialogues["no_more_quests"] = {
+		text = "You have proven your worth. I have nothing left to teach you.",
+		options = { { order = 1, label = "Thank you.", nextId = nil } },
+	}
+
+	return {
+		name = name,
+		title = title,
 		initialNode = function(quests)
-			if not quests.completed["Cultivate_01"] then
-				if quests.active["Cultivate_01"] then
-					return quests.active["Cultivate_01"].isCompleted and "q1_claim" or "q1_in_progress"
-				else
-					return "q1_start"
+			for i, quest in questChain do
+				if not quests.completed[quest.id] then
+					if quests.active[quest.id] then
+						return quests.active[quest.id].isCompleted and ("q" .. i .. "_claim")
+							or ("q" .. i .. "_in_progress")
+					else
+						return "q" .. i .. "_start"
+					end
 				end
 			end
-
-			if not quests.completed["Kill_01"] then
-				if quests.active["Kill_01"] then
-					return quests.active["Kill_01"].isCompleted and "q2_claim" or "q2_in_progress"
-				else
-					return "q2_start"
-				end
-			end
-
-			if not quests.completed["Cultivate_02"] then
-				if quests.active["Cultivate_02"] then
-					return quests.active["Cultivate_02"].isCompleted and "q3_claim" or "q3_in_progress"
-				else
-					return "q3_start"
-				end
-			end
-
 			return "no_more_quests"
 		end,
+		dialogues = dialogues,
+	}
+end
 
-		dialogues = {
-			["q1_start"] = {
-				text = "You're too weak to take any mission from me. Reach Qi Condensation I first.",
-				options = {
-					{
-						order = 1,
-						label = "Accept.",
-						action = "AcceptQuest",
-						actionParam = "Cultivate_01",
-						nextId = nil,
-					},
-					{
-						order = 2,
-						label = "Maybe later...",
-						nextId = nil,
-					},
-				},
-			},
-			["q1_in_progress"] = {
-				text = "Why are you back? you haven't reached Qi Condensation I yet!",
-				options = {
-					{
-						order = 1,
-						label = "I'm on it.",
-						nextId = nil,
-					},
-				},
-			},
-			["q1_claim"] = {
-				text = "Not bad. You've reached Qi Condensation I. Here is your reward.",
-				options = {
-					{
-						order = 1,
-						label = "Claim Reward",
-						action = "CompleteQuest",
-						actionParam = "Cultivate_01",
-						nextId = "q2_start", -- "q2_start"
-					},
-				},
-			},
-
-			["q2_start"] = {
-				text = "Now try to beat 10 slimes.",
-				options = {
-					{
-						order = 1,
-						label = "Okay.",
-						action = "AcceptQuest",
-						actionParam = "Kill_01",
-						nextId = nil,
-					},
-					{
-						order = 2,
-						label = "Maybe later.",
-						nextId = nil,
-					},
-				},
-			},
-			["q2_in_progress"] = {
-				text = "Why are you back? you haven't kill 10 Slimes yet!",
-				options = {
-					{
-						order = 1,
-						label = "I'm on it.",
-						nextId = nil,
-					},
-				},
-			},
-			["q2_claim"] = {
-				text = "Not bad. Here is your reward before doing the next quest, you'll need it.",
-				options = {
-					{
-						order = 1,
-						label = "Claim Reward",
-						action = "CompleteQuest",
-						actionParam = "Kill_01",
-						nextId = "q3_start",
-					},
-				},
-			},
-
-			["q3_start"] = {
-				text = "Now, Cultivate to Foundation Establishment I to Unlock the Waterfall Cultivation Area (2x Boost).",
-				options = {
-					{
-						order = 1,
-						label = "Okay.",
-						action = "AcceptQuest",
-						actionParam = "Cultivate_02",
-						nextId = nil,
-					},
-					{
-						order = 2,
-						label = "Maybe later.",
-						nextId = nil,
-					},
-				},
-			},
-			["q3_in_progress"] = {
-				text = "Why are you back? GO CULTIVATE AGAIN!",
-				options = {
-					{
-						order = 1,
-						label = "I'm on it.",
-						nextId = nil,
-					},
-				},
-			},
-			["q3_claim"] = {
-				text = "Not bad. Here is your reward.",
-				options = {
-					{
-						order = 1,
-						label = "Claim Reward",
-						action = "CompleteQuest",
-						actionParam = "Cultivate_02",
-						nextId = nil,
-					},
-				},
-			},
-
-			["no_more_quests"] = {
-				text = "You have proven your worth. I have nothing left to teach you.",
-				options = {
-					{
-						order = 1,
-						label = "Thank you, Elder.",
-						nextId = nil,
-					},
-				},
-			},
+NPCServiceUtils.Data = {
+	["???"] = createQuestChainNPC("Mysterious Being", "???", {
+		{
+			id = "Cultivate_01", -- quest ID
+			startText = "You're too weak to take any mission from me. Reach Qi Condensation I first.",
+			progressText = "Why are you back? You haven't reached Qi Condensation I yet!",
+			claimText = "Not bad. You've reached Qi Condensation I. Here is your reward.",
 		},
-	} :: NPCConfig,
+		{
+			id = "Kill_01",
+			startText = "Now try to beat 10 slimes.",
+			progressText = "Why are you back? You haven't killed 10 Slimes yet!",
+			claimText = "Not bad. Here is your reward before doing the next quest, you'll need it.",
+		},
+		{
+			id = "Cultivate_02",
+			startText = "Now, Cultivate to Foundation Establishment I to Unlock the Waterfall Area.",
+			progressText = "Why are you back? GO CULTIVATE AGAIN!",
+			claimText = "Not bad. Here is your reward.",
+		},
+		{
+			id = "Kill_02",
+			startText = "Now try to beat 10 goblins.",
+			progressText = "Why are you back? You haven't killed 10 Goblins yet!",
+			claimText = "Not bad. Here is your reward.",
+		},
+	}),
 
 	["GoblinSlayer"] = {
 		name = "The Goblin Hater",
