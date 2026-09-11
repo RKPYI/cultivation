@@ -16,6 +16,7 @@ type State = {
 	GiveQiCooldown: { [Player]: number },
 
 	activeLoops: { [Player]: { [string]: boolean } },
+	isCultivating: { [Player]: boolean },
 }
 
 export type QiServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -43,6 +44,7 @@ function QiServiceServer.init(self: QiServiceServer)
 	self.Qi = {}
 	self.GiveQiCooldown = {}
 	self.activeLoops = {}
+	self.isCultivating = {}
 
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
@@ -67,20 +69,41 @@ function QiServiceServer.OnPlayerAdded(self: QiServiceServer, player: Player)
 	self.Qi[player] = 0
 	self.GiveQiCooldown[player] = 0
 	self.activeLoops[player] = {}
+	self.isCultivating[player] = false
 end
 
 function QiServiceServer.OnPlayerRemoving(self: QiServiceServer, player: Player)
 	self.Qi[player] = nil
 	self.GiveQiCooldown[player] = nil
 	self.activeLoops[player] = nil
+	self.isCultivating[player] = nil
 end
 
 function QiServiceServer.start(self: QiServiceServer)
 	ZoneServiceServer.onZoneStateChanged:Connect(function(player: Player, zoneName: string, isInside: boolean)
 		if isInside then
-			self:StartQiLoop(player, zoneName)
+			if ZoneServiceServer.isCultivating[player] then
+				self:StartQiLoop(player, zoneName)
+			end
 		else
 			self:StopQiLoop(player, zoneName)
+		end
+	end)
+
+	ZoneServiceServer.onCultivationStateChanged:Connect(function(player: Player, isCultivating: boolean)
+		self.isCultivating[player] = isCultivating
+
+		if isCultivating then
+			local currentZone = ZoneServiceServer:getCurrentZone(player)
+			if currentZone then
+				self:StartQiLoop(player, currentZone)
+			end
+		else
+			if self.activeLoops[player] then
+				for zoneName in self.activeLoops[player] do
+					self:StopQiLoop(player, zoneName)
+				end
+			end
 		end
 	end)
 end

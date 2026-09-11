@@ -1,3 +1,4 @@
+local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -10,15 +11,113 @@ local Data = require(ReplicatedStorage.Shared.Data).client
 local QiAreaFolder = workspace:WaitForChild("QiArea")
 local Player = Players.LocalPlayer
 
+local ACTION_CULTIVATE = "ToggleCultivationAction"
+
 local networker = nil
 local ZoneServiceClient = {}
 local isTouching = {}
+local isCultivating = false
+
+local animStart = Instance.new("Animation")
+animStart.AnimationId = "rbxassetid://105247939508981"
+local animIdle = Instance.new("Animation")
+animIdle.AnimationId = "rbxassetid://128783616991927"
+local animStop = Instance.new("Animation")
+animStop.AnimationId = "rbxassetid://90483274428194"
+
+local startTrack: AnimationTrack? = nil
+local idleTrack: AnimationTrack? = nil
+local stopTrack: AnimationTrack? = nil
+local startEndedConnection: RBXScriptConnection? = nil
+
+local function loadTracks(character: Model)
+	local humanoid = character:WaitForChild("Humanoid") :: Humanoid
+	local animator = humanoid:WaitForChild("Animator") :: Animator
+
+	startTrack = animator:LoadAnimation(animStart)
+	idleTrack = animator:LoadAnimation(animIdle)
+	stopTrack = animator:LoadAnimation(animStop)
+end
 
 function ZoneServiceClient.init(self)
 	networker = Networker.new("ZoneService", ZoneServiceClient)
 
 	self:setupAreaUI()
 	self:setupAreaListener()
+	self:setupAnimationListener()
+	self:bindCultivationAction()
+
+	if Player.Character then
+		loadTracks(Player.Character)
+	end
+	Player.CharacterAdded:Connect(loadTracks)
+end
+
+function ZoneServiceClient.bindCultivationAction(self)
+	ContextActionService:BindAction(
+		ACTION_CULTIVATE,
+		function(actionName: string, inputState: Enum.UserInputState, _inputObject: InputObject)
+			if inputState == Enum.UserInputState.Begin then
+				local nextState = not isCultivating
+				self:toggleCultivation(nextState)
+			end
+		end,
+		true,
+		Enum.KeyCode.E
+	)
+
+	ContextActionService:SetTitle(ACTION_CULTIVATE, "Cultivate")
+end
+
+function ZoneServiceClient.setupAnimationListener(self)
+	networker:getServerChangedSignal("IsCultivating"):Connect(function(serverIsCultivating: boolean)
+		isCultivating = serverIsCultivating
+		self:handleCultivationAnim(serverIsCultivating)
+	end)
+end
+
+function ZoneServiceClient.handleCultivationAnim(self, isCultivating: boolean)
+	if not startTrack or not idleTrack or not stopTrack then
+		return
+	end
+
+	if startEndedConnection then
+		startEndedConnection:Disconnect()
+		startEndedConnection = nil
+	end
+
+	if isCultivating then
+		if stopTrack.IsPlaying then
+			stopTrack:Stop()
+		end
+
+		startTrack:Play()
+
+		startEndedConnection = startTrack:GetMarkerReachedSignal("End"):Connect(function()
+			if startEndedConnection then
+				startEndedConnection:Disconnect()
+				startEndedConnection = nil
+			end
+
+			if isCultivating then
+				idleTrack:Play()
+				startTrack:Stop()
+			end
+		end)
+	else
+		if startTrack.IsPlaying then
+			startTrack:Stop()
+		end
+		if idleTrack.IsPlaying then
+			idleTrack:Stop()
+		end
+
+		stopTrack:Play()
+	end
+end
+
+function ZoneServiceClient.toggleCultivation(self, start: boolean)
+	networker:fire("toggleCultivation", start)
 end
 
 local function calculateParticle(qi)
@@ -123,9 +222,5 @@ end
 function ZoneServiceClient.OnZoneChanged(self)
 	return networker:getServerChangedSignal("InZone")
 end
--- function ZoneServiceClient.GiveQi(self, zoneName: string)
--- 	networker:fire("GiveQi", zoneName)
--- 	-- ADD FLOATING +1 QI in screen
--- end
 
 return ZoneServiceClient

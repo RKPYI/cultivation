@@ -4,13 +4,15 @@ local Players = game:GetService("Players")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Signal = require(ReplicatedStorage.Packages.Signal)
-local Data = require(ReplicatedStorage.Shared.Data)
+local Data = require(ReplicatedStorage.Shared.Data).server
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
 local QiAreaFolder = workspace:WaitForChild("QiArea")
 
 type State = {
 	isTouching: { [Player]: { [string]: boolean } },
+	isCultivating: { [Player]: boolean },
 	onZoneStateChanged: any, -- Signal
+	onCultivationStateChanged: any, -- Signal
 }
 
 export type ZoneServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -20,6 +22,8 @@ export type ZoneServiceServer = typeof(setmetatable({} :: State, { __index = {} 
 	OnPlayerRemoving: (self: ZoneServiceServer, player: Player) -> (),
 
 	setupAreaListener: (self: ZoneServiceServer) -> (),
+	getCurrentZone: (self: ZoneServiceServer, player: Player) -> string?,
+	toggleCultivation: (self: ZoneServiceServer, player: Player, start: boolean) -> (),
 	-- Networker
 	networker: any,
 }
@@ -29,13 +33,16 @@ local ZoneServiceServer = {} :: ZoneServiceServer
 -- Setup
 function ZoneServiceServer.init(self: ZoneServiceServer)
 	self.isTouching = {}
+	self.isCultivating = {}
 	self.onZoneStateChanged = Signal.new()
+	self.onCultivationStateChanged = Signal.new()
 
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
 		"ZoneService",
 		self,
 		{
+			self.toggleCultivation,
 			-- Add public network
 		} :: any
 	)
@@ -51,14 +58,78 @@ end
 
 function ZoneServiceServer.OnPlayerAdded(self: ZoneServiceServer, player: Player)
 	self.isTouching[player] = {}
+	self.isCultivating[player] = false
 end
 
 function ZoneServiceServer.OnPlayerRemoving(self: ZoneServiceServer, player: Player)
 	self.isTouching[player] = nil
+	self.isCultivating[player] = nil
 end
 
 function ZoneServiceServer.start(self: ZoneServiceServer)
 	self:setupAreaListener()
+end
+
+function ZoneServiceServer.getCurrentZone(self: ZoneServiceServer, player: Player): string?
+	local playerTouches = self.isTouching[player]
+	if not playerTouches then
+		return nil
+	end
+
+	for zoneName, isInside in playerTouches do
+		if isInside then
+			return zoneName
+		end
+	end
+	return nil
+end
+
+function ZoneServiceServer.toggleCultivation(self: ZoneServiceServer, player: Player, start: boolean): boolean
+	if not player or not player.Character then
+		return false
+	end
+
+	local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+	if not humanoid or humanoid.Health <= 0 then
+		return false
+	end
+
+	if start then
+		if self.isCultivating[player] then
+			return false
+		end
+
+		local currentZone = self:getCurrentZone(player)
+		if not currentZone then
+			return false
+		end
+
+		local zoneData = ZoneServiceUtils.Data[currentZone]
+		local playerRealm = Data[player] and Data[player].realm() or 0
+		if not zoneData or playerRealm < zoneData.realmReq then
+			return false
+		end
+
+		self.isCultivating[player] = true
+		-- humanoid.WalkSpeed = 0
+		-- humanoid.JumpPower = 0
+
+		self.networker:set(player, "IsCultivating", true)
+		self.onCultivationStateChanged:Fire(player, true)
+		return true
+	else
+		if not self.isCultivating[player] then
+			return false
+		end
+
+		self.isCultivating[player] = false
+		-- humanoid.WalkSpeed = 16 -- Questinable
+		-- humanoid.JumpPower = 50 -- same here too
+
+		self.networker:set(player, "IsCultivating", false)
+		self.onCultivationStateChanged:Fire(player, false)
+		return true
+	end
 end
 
 function ZoneServiceServer.setupAreaListener(self)
@@ -91,6 +162,10 @@ function ZoneServiceServer.setupAreaListener(self)
 			self.isTouching[player][area.Name] = isInside
 			self.onZoneStateChanged:Fire(player, area.Name, isInside)
 			self.networker:set(player, "InZone", isInside and area.Name or nil)
+
+			if not isInside and self.isCultivating[player] then
+				self:toggleCultivation(player, false)
+			end
 		end)
 	end
 end
