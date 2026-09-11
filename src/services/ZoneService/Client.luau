@@ -63,7 +63,7 @@ function ZoneServiceClient.bindCultivationAction(self)
 			end
 		end,
 		true,
-		Enum.KeyCode.E
+		Enum.KeyCode.C
 	)
 
 	ContextActionService:SetTitle(ACTION_CULTIVATE, "Cultivate")
