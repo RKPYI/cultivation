@@ -128,6 +128,13 @@ local function MobileControls(props)
 				Color = Color3.fromRGB(255, 255, 255),
 				Thickness = 2,
 			}),
+
+			Title = e(Text, {
+				anchorPoint = Vector2.new(0.5, 0.5),
+				pos = UDim2.fromScale(0.5, 0.5),
+				size = UDim2.fromScale(0.8, 0.8),
+				text = "C",
+			}),
 		}),
 	})
 end
