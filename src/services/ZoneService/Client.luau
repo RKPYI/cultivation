@@ -45,28 +45,11 @@ function ZoneServiceClient.init(self)
 	self:setupAreaUI()
 	self:setupAreaListener()
 	self:setupAnimationListener()
-	self:bindCultivationAction()
 
 	if Player.Character then
 		loadTracks(Player.Character)
 	end
 	Player.CharacterAdded:Connect(loadTracks)
-end
-
-function ZoneServiceClient.bindCultivationAction(self)
-	ContextActionService:BindAction(
-		ACTION_CULTIVATE,
-		function(actionName: string, inputState: Enum.UserInputState, _inputObject: InputObject)
-			if inputState == Enum.UserInputState.Begin then
-				local nextState = not isCultivating
-				self:toggleCultivation(nextState)
-			end
-		end,
-		true,
-		Enum.KeyCode.C
-	)
-
-	ContextActionService:SetTitle(ACTION_CULTIVATE, "Cultivate")
 end
 
 function ZoneServiceClient.setupAnimationListener(self)
@@ -221,6 +204,10 @@ end
 
 function ZoneServiceClient.OnZoneChanged(self)
 	return networker:getServerChangedSignal("InZone")
+end
+
+function ZoneServiceClient.onCultivationStateChanged(self)
+	return networker:getServerChangedSignal("IsCultivating")
 end
 
 return ZoneServiceClient

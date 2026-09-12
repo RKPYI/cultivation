@@ -28,14 +28,22 @@ TutorialServiceUtils.Data = {
 	},
 	[3] = {
 		stepIndex = 3,
+		title = "Start Cultivating",
+		description = "Press (C) to start cultivating. You can only start cultivating in a cultivation area and meets the requirement of the area.",
+		highlightArea = "QiArea/Area1",
+		allowSkip = true,
+		nextText = "Next >",
+	},
+	[4] = {
+		stepIndex = 4,
 		title = "Visit the Merchant",
 		description = "Find the Shopkeeper beside the waterfall to view available items that help with cultivating.",
 		highlightArea = "NPC/Shopkeeper",
 		allowSkip = true,
 		nextText = "Next >",
 	},
-	[4] = {
-		stepIndex = 4,
+	[5] = {
+		stepIndex = 5,
 		title = "Get a Quest",
 		description = "Now its time to start your first quest! talk to the Mysterious Man and start your first quest.",
 		highlightArea = "NPC/???",

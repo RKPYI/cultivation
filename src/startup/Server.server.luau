@@ -27,6 +27,7 @@ EnemyServiceServer:init()
 LeaderboardServiceServer:init()
 TutorialServiceServer:init()
 
+RealmServiceServer:start()
 ZoneServiceServer:start()
 QiServiceServer:start()
 EnemyServiceServer:start()

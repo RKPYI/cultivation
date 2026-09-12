@@ -13,6 +13,7 @@ type State = {
 	isCultivating: { [Player]: boolean },
 	onZoneStateChanged: any, -- Signal
 	onCultivationStateChanged: any, -- Signal
+	onMovementLockedChanged: any, -- Signal
 }
 
 export type ZoneServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -36,6 +37,7 @@ function ZoneServiceServer.init(self: ZoneServiceServer)
 	self.isCultivating = {}
 	self.onZoneStateChanged = Signal.new()
 	self.onCultivationStateChanged = Signal.new()
+	self.onMovementLockedChanged = Signal.new()
 
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
@@ -113,6 +115,7 @@ function ZoneServiceServer.toggleCultivation(self: ZoneServiceServer, player: Pl
 		self.isCultivating[player] = true
 		-- humanoid.WalkSpeed = 0
 		-- humanoid.JumpPower = 0
+		self.onMovementLockedChanged:Fire(player, true)
 
 		self.networker:set(player, "IsCultivating", true)
 		self.onCultivationStateChanged:Fire(player, true)
@@ -123,8 +126,9 @@ function ZoneServiceServer.toggleCultivation(self: ZoneServiceServer, player: Pl
 		end
 
 		self.isCultivating[player] = false
-		-- humanoid.WalkSpeed = 16 -- Questinable
-		-- humanoid.JumpPower = 50 -- same here too
+
+		-- RealmServiceServer:UpdateWalkspeed(player)
+		self.onMovementLockedChanged:Fire(player, false)
 
 		self.networker:set(player, "IsCultivating", false)
 		self.onCultivationStateChanged:Fire(player, false)

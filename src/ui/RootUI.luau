@@ -14,6 +14,7 @@ local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Leaderboard = require(ReplicatedStorage.UI.views.Leaderboard)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
+local MobileControls = require(ReplicatedStorage.UI.views.MobileControls)
 local NPCShop = require(ReplicatedStorage.UI.views.NPCShop)
 local Onboarding = require(ReplicatedStorage.UI.views.Onboarding)
 local QiDisplay = require(ReplicatedStorage.UI.views.QiDisplay)
@@ -132,6 +133,8 @@ local function RootUI()
 		QiMultDisplay = e(QiDisplay, {
 			isInZone = isInZone,
 		}),
+
+		MobileControls = e(MobileControls),
 
 		DialogueModal = activeNPC ~= nil and e(Dialogue, {
 			npcId = activeNPC,

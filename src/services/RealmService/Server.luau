@@ -1,7 +1,9 @@
 --!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
 
+local ZoneServiceServer = require(ServerScriptService.Services.ZoneService.ZoneServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
@@ -87,6 +89,11 @@ function RealmServiceServer.OnPlayerAdded(self: RealmServiceServer, player: Play
 			task.wait(0.1)
 		end
 
+		-- Listening to new realm
+		Data[player].realm.Changed(function(newRealm)
+			recalculateSpeed(player, newRealm)
+		end)
+
 		if not player:IsDescendantOf(Players) then
 			return
 		end
@@ -105,7 +112,24 @@ function RealmServiceServer.OnPlayerRemoving(self: RealmServiceServer, player: P
 	self.playerRealmData[player] = nil
 end
 
-function RealmServiceServer.start(self: RealmServiceServer) end
+function RealmServiceServer.start(self: RealmServiceServer)
+	ZoneServiceServer.onMovementLockedChanged:Connect(function(player: Player, locked: boolean)
+		if not player.Character then
+			return
+		end
+		local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
+		if not humanoid then
+			return
+		end
+
+		if locked then
+			humanoid.WalkSpeed = 0
+			humanoid.JumpHeight = 0
+		else
+			self:UpdateWalkspeed(player)
+		end
+	end)
+end
 
 function RealmServiceServer.Breakthrough(self, player)
 	if not Data[player] then
@@ -145,11 +169,6 @@ function RealmServiceServer.UpdateWalkspeed(self, player)
 	-- Initializing
 	local currentRealm = Data[player].realm()
 	recalculateSpeed(player, currentRealm)
-
-	-- Listening to new realm
-	Data[player].realm.Changed(function(newRealm)
-		recalculateSpeed(player, newRealm)
-	end)
 
 	print("Walkspeed Upated: " .. Data[player].walkspeed())
 end
