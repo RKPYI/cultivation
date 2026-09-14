@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
+local Data = require(ReplicatedStorage.Shared.Data).client
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
@@ -17,6 +18,9 @@ local networker = nil
 local ZoneServiceClient = {}
 local isTouching = {}
 local isCultivating = false
+
+local AuraTemplate = ReplicatedStorage:WaitForChild("Aura") :: Part
+local activeAura: Part? = nil
 
 local animStart = Instance.new("Animation")
 animStart.AnimationId = "rbxassetid://105247939508981"
@@ -49,12 +53,117 @@ function ZoneServiceClient.init(self)
 	if Player.Character then
 		loadTracks(Player.Character)
 	end
-	Player.CharacterAdded:Connect(loadTracks)
+	Player.CharacterAdded:Connect(function(char)
+		loadTracks(char)
+
+		self:destroyAura()
+	end)
+end
+
+local function calculateParticle(qi)
+	local maxParticleSize = 6.4
+	local minParticleSize = 0.2
+	if qi <= 64 then
+		local progress = math.clamp(qi / 64, 0, 1)
+		local size = minParticleSize + progress * (maxParticleSize - minParticleSize)
+		return 0, size
+	end
+
+	local tier = 1
+	local prevLimit = 64
+	local currentLimit = 64 ^ 2 -- 4096
+
+	while qi > currentLimit do
+		tier = tier + 1
+		prevLimit = currentLimit
+		currentLimit = 64 ^ (2 ^ tier)
+	end
+
+	local range = currentLimit - prevLimit
+	local progress = (qi - prevLimit) / range
+	local size = minParticleSize + progress * (maxParticleSize - minParticleSize)
+
+	return tier, size
+end
+
+function ZoneServiceClient.destroyAura(self)
+	if activeAura then
+		activeAura:Destroy()
+		activeAura = nil
+	end
+end
+
+function ZoneServiceClient.attachAura(self)
+	self:destroyAura()
+
+	local character = Player.Character
+	if not character then
+		return
+	end
+	local rootPart = character:FindFirstChild("HumanoidRootPart") :: BasePart
+	if not rootPart then
+		return
+	end
+
+	local currentZoneName = networker:fetch("getCurrentZone")
+	if not currentZoneName then
+		warn(currentZoneName)
+		return
+	end
+
+	local zoneData = ZoneServiceUtils.Data[currentZoneName]
+	if not zoneData then
+		warn(zoneData)
+		return
+	end
+
+	local auraClone = AuraTemplate:Clone() :: Part
+	auraClone.Name = "ActiveAura"
+	auraClone.CFrame = rootPart.CFrame
+	auraClone.Parent = character
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = rootPart
+	weld.Part1 = auraClone
+	weld.Parent = rootPart
+
+	local qi = BigNum.fromNumber(zoneData.qiMultiplier)
+	local currentTier, particleSize = calculateParticle(BigNum.toNumber(qi))
+	local rate = math.min((10 + zoneData.realmReq + (Data.realm() / 2)), 100) -- MAXXING IT OUT AT 100 FOR PERFORMANCE
+
+	local particleColor = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+	if currentTier == 0 then -- x1 --> x64
+		particleColor = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+	elseif currentTier == 1 then -- x65 --> x4k
+		particleColor = ColorSequence.new(Color3.fromRGB(0, 150, 255))
+	elseif currentTier == 2 then -- x4k --> x16m
+		particleColor = ColorSequence.new(Color3.fromRGB(138, 43, 226))
+	elseif currentTier >= 3 then -- x16m --> x281t --> beyond
+		particleColor = ColorSequence.new(Color3.fromRGB(255, 215, 0))
+	end
+
+	for _, child in auraClone:GetChildren() do
+		if child:IsA("ParticleEmitter") then
+			child.Size = NumberSequence.new(particleSize)
+			child.Rate = rate
+			child.Color = particleColor
+			child.Enabled = true
+		end
+	end
+
+	activeAura = auraClone
 end
 
 function ZoneServiceClient.setupAnimationListener(self)
 	networker:getServerChangedSignal("IsCultivating"):Connect(function(serverIsCultivating: boolean)
 		isCultivating = serverIsCultivating
+
+		if serverIsCultivating then
+			self:attachAura()
+		else
+			self:destroyAura()
+		end
+
 		self:handleCultivationAnim(serverIsCultivating)
 	end)
 end
@@ -101,32 +210,6 @@ end
 
 function ZoneServiceClient.toggleCultivation(self, start: boolean)
 	networker:fire("toggleCultivation", start)
-end
-
-local function calculateParticle(qi)
-	local maxParticleSize = 6.4
-	local minParticleSize = 0.2
-	if qi <= 64 then
-		local progress = math.clamp(qi / 64, 0, 1)
-		local size = minParticleSize + progress * (maxParticleSize - minParticleSize)
-		return 0, size
-	end
-
-	local tier = 1
-	local prevLimit = 64
-	local currentLimit = 64 ^ 2 -- 4096
-
-	while qi > currentLimit do
-		tier = tier + 1
-		prevLimit = currentLimit
-		currentLimit = 64 ^ (2 ^ tier)
-	end
-
-	local range = currentLimit - prevLimit
-	local progress = (qi - prevLimit) / range
-	local size = minParticleSize + progress * (maxParticleSize - minParticleSize)
-
-	return tier, size
 end
 
 function ZoneServiceClient.setupAreaUI(self)

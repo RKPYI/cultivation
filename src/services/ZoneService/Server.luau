@@ -45,6 +45,7 @@ function ZoneServiceServer.init(self: ZoneServiceServer)
 		self,
 		{
 			self.toggleCultivation,
+			self.getCurrentZone,
 			-- Add public network
 		} :: any
 	)

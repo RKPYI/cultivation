@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
 local Zone = {}
 
 export type ZoneInfo = {
@@ -42,35 +43,51 @@ Zone.Data = {
 } :: { [string]: ZoneInfo }
 
 function Zone.CalculateDist(zone: Part, callback: (player: Player, isInside: boolean) -> ())
-	zone.Touched:Connect(function(hit)
-		if hit.Name ~= "HumanoidRootPart" then
-			return
-		end
+	local overlapParams = OverlapParams.new()
+	overlapParams.FilterType = Enum.RaycastFilterType.Include
 
-		local character = hit.Parent
-		if not character then
-			return
-		end
+	local playersInZone: { [Player]: boolean } = {}
 
-		local player = Players:GetPlayerFromCharacter(character)
-		if player then
-			callback(player, true)
-		end
-	end)
+	task.spawn(function()
+		while zone and zone.Parent do
+			local rootParts = {}
+			for _, player in Players:GetPlayers() do
+				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					table.insert(rootParts, player.Character.HumanoidRootPart)
+				end
+			end
+			overlapParams.FilterDescendantsInstances = rootParts
 
-	zone.TouchEnded:Connect(function(hit)
-		if hit.Name ~= "HumanoidRootPart" then
-			return
-		end
+			local partsInZone = workspace:GetPartsInPart(zone, overlapParams)
+			local currentPlayers: { [Player]: boolean } = {}
 
-		local character = hit.Parent
-		if not character then
-			return
-		end
+			for _, part in partsInZone do
+				local character = part.Parent
+				if character then
+					local player = Players:GetPlayerFromCharacter(character)
+					if player then
+						currentPlayers[player] = true
+					end
+				end
+			end
 
-		local player = Players:GetPlayerFromCharacter(character)
-		if player then
-			callback(player, false)
+			-- Fire enter callbacks
+			for player in currentPlayers do
+				if not playersInZone[player] then
+					playersInZone[player] = true
+					callback(player, true)
+				end
+			end
+
+			-- Fire leave callbacks
+			for player in playersInZone do
+				if not currentPlayers[player] then
+					playersInZone[player] = nil
+					callback(player, false)
+				end
+			end
+
+			task.wait(0.2)
 		end
 	end)
 end
