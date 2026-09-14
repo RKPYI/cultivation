@@ -6,6 +6,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local Data = require(ReplicatedStorage.Shared.Data).client
 local ZoneServiceClient = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceClient)
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
+local Shortcut = require(ReplicatedStorage.UI.components.Shortcut)
 local Text = require(ReplicatedStorage.UI.components.Text)
 local e = React.createElement
 
@@ -73,44 +74,10 @@ local function MobileControls(props)
 		else Color3.fromRGB(50, 50, 50)
 
 	return e(React.Fragment, _, {
-		Shortcut = canCultivate and e("Frame", {
-			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.01, 0.95),
-			Size = UDim2.fromScale(0.1, 0.03),
-		}, {
-			UIAspectRatioConstraint = e("UIAspectRatioConstraint", {
-				AspectRatio = 6,
-			}),
-			UICorner = e("UICorner", {
-				CornerRadius = UDim.new(1, 0),
-			}),
-
-			Description = e(Text, {
-				pos = UDim2.fromScale(0.4, 0),
-				size = UDim2.fromScale(0.5, 1),
-				text = "Cultivate",
-			}),
-
-			ShortcutContainer = e("Frame", {
-				BackgroundColor3 = Color3.fromRGB(255, 107, 109),
-				BackgroundTransparency = 0.25,
-				Size = UDim2.fromScale(0.3, 1),
-			}, {
-				UICorner = e("UICorner", {
-					CornerRadius = UDim.new(1, 0),
-				}),
-				UIStroke = e("UIStroke", {
-					Thickness = 2,
-					Transparency = 0.25,
-				}),
-
-				Title = e(Text, {
-					anchorPoint = Vector2.new(0.5, 0.5),
-					pos = UDim2.fromScale(0.5, 0.5),
-					size = UDim2.fromScale(0.8, 0.8),
-					text = "C",
-				}),
-			}),
+		Shortcut = canCultivate and e(Shortcut, {
+			Color = Color3.fromRGB(255, 107, 109),
+			Icon = "C",
+			Description = "Cultivate",
 		}),
 
 		Button = e("ImageButton", {
