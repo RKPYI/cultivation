@@ -11,6 +11,7 @@ local Modal = require(ReplicatedStorage.UI.components.Modal)
 local Breakthrough = require(ReplicatedStorage.UI.views.Breakthrough)
 local Counter = require(ReplicatedStorage.UI.views.Counter)
 local Dialogue = require(ReplicatedStorage.UI.views.Dialogue)
+local GamepassShop = require(ReplicatedStorage.UI.views.GamepassShop)
 local Inventory = require(ReplicatedStorage.UI.views.Inventory)
 local Leaderboard = require(ReplicatedStorage.UI.views.Leaderboard)
 local Menu = require(ReplicatedStorage.UI.views.Menu)
@@ -55,6 +56,10 @@ local function RootUI()
 
 		if activeModal == "Leaderboard" then
 			return e(Leaderboard)
+		end
+
+		if activeModal == "Shop" then
+			return e(GamepassShop)
 		end
 
 		if activeModal == "NPCShop" then

@@ -16,6 +16,12 @@
               "$path": "src/services/EnemyService/Utils.luau"
             }
           },
+          "GamepassService": {
+            "$className": "Folder",
+            "GamepassServiceUtils": {
+              "$path": "src/services/GamepassService/Utils.luau"
+            }
+          },
           "ItemService": {
             "$className": "Folder",
             "ItemServiceClient": {

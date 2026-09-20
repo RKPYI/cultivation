@@ -1,4 +1,5 @@
 --!strict
+local MarketplaceService = game:GetService("MarketplaceService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
@@ -6,6 +7,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ZoneServiceServer = require(ServerScriptService.Services.ZoneService.ZoneServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local BigNum = require(ReplicatedStorage.Shared.BigNum)
+local GamepassServiceUtils = require(ReplicatedStorage.Shared.Services.GamepassService.GamepassServiceUtils)
 local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.ItemServiceUtils)
 local RealmServiceUtils = require(ReplicatedStorage.Shared.Services.RealmService.RealmServiceUtils)
 local ZoneServiceUtils = require(ReplicatedStorage.Shared.Services.ZoneService.ZoneServiceUtils)
@@ -17,6 +19,8 @@ type State = {
 
 	activeLoops: { [Player]: { [string]: boolean } },
 	isCultivating: { [Player]: boolean },
+
+	ownedGamepasses: { [Player]: { [string]: boolean } },
 }
 
 export type QiServiceServer = typeof(setmetatable({} :: State, { __index = {} })) & {
@@ -70,6 +74,13 @@ function QiServiceServer.OnPlayerAdded(self: QiServiceServer, player: Player)
 	self.GiveQiCooldown[player] = 0
 	self.activeLoops[player] = {}
 	self.isCultivating[player] = false
+
+	task.spawn(function()
+		local owned = GamepassServiceUtils.loadPlayerPassesAsync(player)
+		if self.ownedGamepasses[player] then
+			self.ownedGamepasses[player] = owned
+		end
+	end)
 end
 
 function QiServiceServer.OnPlayerRemoving(self: QiServiceServer, player: Player)
@@ -80,6 +91,17 @@ function QiServiceServer.OnPlayerRemoving(self: QiServiceServer, player: Player)
 end
 
 function QiServiceServer.start(self: QiServiceServer)
+	MarketplaceService.PromptGamePassPurchaseFinished:Connect(
+		function(player: Player, passId: number, wasPurchased: boolean)
+			if wasPurchased then
+				local passKey = GamepassServiceUtils.getKeyFromId(passId)
+				if passKey and self.ownedGamepasses[player] then
+					self.ownedGamepasses[player][passKey] = true
+				end
+			end
+		end
+	)
+
 	ZoneServiceServer.onZoneStateChanged:Connect(function(player: Player, zoneName: string, isInside: boolean)
 		if isInside then
 			if ZoneServiceServer.isCultivating[player] then
@@ -193,9 +215,15 @@ function QiServiceServer.GetTotalQiGiven(self: QiServiceServer, player: Player, 
 		end
 	end
 
+	local gamepassMul = 1
+	if self.ownedGamepasses[player] then
+		gamepassMul = GamepassServiceUtils.getCombinedMultiplier(self.ownedGamepasses[player], "Multiplier")
+	end
+
 	local TotalQiGiven = BigNum.mul(BaseQi, qiRealm)
 	TotalQiGiven = BigNum.mul(TotalQiGiven, qiZone)
 	TotalQiGiven = BigNum.mul(TotalQiGiven, itemMul)
+	TotalQiGiven = BigNum.mul(TotalQiGiven, gamepassMul)
 
 	-- #TESTMODE
 	if Data.Service.options.useMock then
