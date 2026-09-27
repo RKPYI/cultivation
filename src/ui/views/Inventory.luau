@@ -6,6 +6,7 @@ local ItemServiceUtils = require(ReplicatedStorage.Shared.Services.ItemService.I
 local Data = require(ReplicatedStorage.Shared.Data).client
 local ItemButton = require(ReplicatedStorage.UI.components.ItemButton)
 local ItemDetailPanel = require(ReplicatedStorage.UI.components.ItemDetailPanel)
+local Text = require(ReplicatedStorage.UI.components.Text)
 local e = React.createElement
 
 local function Inventory()
@@ -36,6 +37,33 @@ local function Inventory()
 			realmConn()
 		end
 	end, {})
+
+	-- Helper function to find and equip the highest-scoring usable item
+	local function equipBestItem()
+		local bestItemName: string? = nil
+		local bestScore = -1
+
+		for _, itemName in items do
+			local itemData = ItemServiceUtils.Data[itemName]
+			if itemData then
+				if playerRealm >= (itemData.realmReq or 0) then
+					local qiMult = itemData.qiMultiplier or 1
+					local dmgMult = itemData.dmgMultiplier or 1
+					local score = (qiMult * dmgMult) + (itemData.realmReq or 0)
+
+					if score > bestScore then
+						bestScore = score
+						bestItemName = itemName
+					end
+				end
+			end
+		end
+
+		-- Equip if a valid best item exists and isn't already equipped
+		if bestItemName and bestItemName ~= equippedItem then
+			ItemServiceClient:ToggleEquipItem(bestItemName)
+		end
+	end
 
 	local inventoryListChildren = React.useMemo(function()
 		local children = {
@@ -72,7 +100,6 @@ local function Inventory()
 					meetsRealmReq = realmMet,
 					layoutOrder = layoutOrder,
 					onClick = function()
-						-- If same item clicked twice, it gets closed
 						if selectedItem == itemName then
 							setSelectedItem(nil)
 						else
@@ -105,9 +132,43 @@ local function Inventory()
 				PaddingTop = UDim.new(0.05, 0),
 			}),
 
+			FooterBar = e("Frame", {
+				BackgroundTransparency = 1,
+				Position = UDim2.fromScale(0, 1.1),
+				Size = UDim2.fromScale(1, 0.15),
+			}, {
+				EquipBestButton = e("TextButton", {
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = Color3.fromRGB(255, 170, 0),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Size = UDim2.fromScale(0.2, 0.9),
+					Text = "",
+					[React.Event.Activated] = equipBestItem,
+				}, {
+					UICorner = e("UICorner", {
+						CornerRadius = UDim.new(0.2, 0),
+					}),
+					UIStroke = e("UIStroke", {
+						ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+						Thickness = 2,
+					}),
+					UIPadding = e("UIPadding", {
+						PaddingBottom = UDim.new(0.1, 0),
+						PaddingTop = UDim.new(0.1, 0),
+						PaddingLeft = UDim.new(0.1, 0),
+						PaddingRight = UDim.new(0.1, 0),
+					}),
+					
+					Text = e(Text, {
+						text = "Equip Best",
+					}),
+
+				}),
+			}),
 			InventoryList = e("ScrollingFrame", {
 				BackgroundTransparency = 1,
-				Size = UDim2.fromScale(1, 1),
+				Position = UDim2.fromScale(0, 0.12),
+				Size = UDim2.fromScale(1, 0.88),
 				AutomaticCanvasSize = Enum.AutomaticSize.Y,
 				CanvasSize = UDim2.fromScale(0, 0),
 				ScrollBarThickness = 5,
