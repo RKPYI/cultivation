@@ -79,7 +79,7 @@ local function Leaderboard(props: LeaderboardProps)
 			NameText = e(Text, {
 				pos = UDim2.fromScale(0.17, 0),
 				size = UDim2.fromScale(0.55, 1),
-				text = "@" .. entry.username or "JOE",
+				text = "@" .. (entry.username or "Anonymous"),
 				textXAlignment = Enum.TextXAlignment.Left,
 			}),
 
