@@ -49,6 +49,7 @@ function QiServiceServer.init(self: QiServiceServer)
 	self.GiveQiCooldown = {}
 	self.activeLoops = {}
 	self.isCultivating = {}
+	self.ownedGamepasses = {}
 
 	-- Networker --> Replacement for RemoteEvents/RemoteFunctions
 	self.networker = Networker.server.new(
@@ -74,6 +75,7 @@ function QiServiceServer.OnPlayerAdded(self: QiServiceServer, player: Player)
 	self.GiveQiCooldown[player] = 0
 	self.activeLoops[player] = {}
 	self.isCultivating[player] = false
+	self.ownedGamepasses[player] = {}
 
 	task.spawn(function()
 		local owned = GamepassServiceUtils.loadPlayerPassesAsync(player)
@@ -88,6 +90,7 @@ function QiServiceServer.OnPlayerRemoving(self: QiServiceServer, player: Player)
 	self.GiveQiCooldown[player] = nil
 	self.activeLoops[player] = nil
 	self.isCultivating[player] = nil
+	self.ownedGamepasses[player] = nil
 end
 
 function QiServiceServer.start(self: QiServiceServer)
