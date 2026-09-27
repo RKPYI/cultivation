@@ -31,6 +31,61 @@ local function ItemDisplayPanel(props: DisplayPanelProps)
 		elseif meetsRealmReq then Color3.fromRGB(0, 0, 255)
 		else Color3.fromRGB(255, 0, 0)
 
+	-- Define known stat multipliers and their visual configuration
+	local statsToDisplay = {
+		{
+			key = "qiMultiplier",
+			label = "Qi Multiplier",
+			value = activeItemData.qiMultiplier,
+			color = Color3.fromRGB(85, 255, 127),
+		},
+		{
+			key = "dmgMultiplier",
+			label = "Damage Multiplier",
+			value = activeItemData.dmgMultiplier,
+			color = Color3.fromRGB(255, 127, 85),
+		},
+	}
+
+	-- Construct base UI elements for ItemData frame
+	local itemDataChildren: { [string]: any } = {
+		UIListLayout = e("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 2),
+		}),
+		UIPadding = e("UIPadding", {
+			PaddingLeft = UDim.new(0.1, 0),
+			PaddingRight = UDim.new(0.1, 0),
+		}),
+
+		ItemName = e(Text, {
+			text = activeItemData.name or selectedItem or "",
+			size = UDim2.fromScale(1, 0.25),
+			layoutOrder = 0,
+		}),
+
+		ReqRealm = e(Text, {
+			text = "Req: " .. RealmServiceUtils.RealmName(activeItemData.realmReq or 0),
+			textColor3 = if meetsRealmReq then Color3.fromRGB(130, 200, 255) else Color3.fromRGB(255, 107, 109),
+			size = UDim2.fromScale(1, 0.2),
+			layoutOrder = 1,
+		}),
+	}
+
+	-- Dynamically append bonuses that provide an actual stat boost (> 1)
+	local currentLayoutOrder = 2
+	for _, stat in statsToDisplay do
+		if stat.value and stat.value > 1 then
+			itemDataChildren["Stat_" .. stat.key] = e(Text, {
+				text = string.format("%s: %gx", stat.label, stat.value),
+				textColor3 = stat.color,
+				size = UDim2.fromScale(1, 0.2),
+				layoutOrder = currentLayoutOrder,
+			})
+			currentLayoutOrder += 1
+		end
+	end
+
 	return e("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(255, 203, 129),
@@ -70,7 +125,7 @@ local function ItemDisplayPanel(props: DisplayPanelProps)
 			IconImg = e("ImageLabel", {
 				BackgroundTransparency = 1,
 				Size = UDim2.fromScale(1, 1),
-				Image = activeItemData and activeItemData.image, -- Get Image from ItemButton
+				Image = activeItemData.image,
 				ScaleType = Enum.ScaleType.Fit,
 			}),
 		}),
@@ -78,43 +133,15 @@ local function ItemDisplayPanel(props: DisplayPanelProps)
 		-- Item Data
 		ItemData = e("Frame", {
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0, 0.5),
-			Size = UDim2.fromScale(1, 0.3),
-		}, {
-			UIListLayout = e("UIListLayout", {
-				SortOrder = Enum.SortOrder.LayoutOrder,
-			}),
-			UIPadding = e("UIPadding", {
-				PaddingLeft = UDim.new(0.1, 0),
-				PaddingRight = UDim.new(0.1, 0),
-			}),
+			Position = UDim2.fromScale(0, 0.48),
+			Size = UDim2.fromScale(1, 0.32),
+		}, itemDataChildren),
 
-			ItemName = e(Text, {
-				text = activeItemData and activeItemData.name or selectedItem or "",
-				size = UDim2.fromScale(1, 0.3),
-				layoutOrder = 0,
-			}),
-
-			ReqRealm = e(Text, {
-				text = "Req: " .. (activeItemData and RealmServiceUtils.RealmName(activeItemData.realmReq) or "None"),
-				textColor3 = if meetsRealmReq then Color3.fromRGB(130, 200, 255) else Color3.fromRGB(255, 107, 109),
-				size = UDim2.fromScale(1, 0.3),
-				layoutOrder = 1,
-			}),
-
-			QiMult = e(Text, {
-				text = "Qi Multiplier: " .. (activeItemData and activeItemData.qiMultiplier or "1") .. "x",
-				textColor3 = Color3.fromRGB(85, 255, 127),
-				size = UDim2.fromScale(1, 0.3),
-				layoutOrder = 2,
-			}),
-		}),
-
-		-- Buttons to Equip/Unequip & Delete
+		-- Buttons to Equip/Unequip
 		Button = e("Frame", {
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0, 0.8),
-			Size = UDim2.fromScale(1, 0.1),
+			Position = UDim2.fromScale(0, 0.82),
+			Size = UDim2.fromScale(1, 0.12),
 		}, {
 			UIPadding = e("UIPadding", {
 				PaddingLeft = UDim.new(0.1, 0),
