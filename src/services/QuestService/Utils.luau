@@ -7,6 +7,7 @@ export type QuestConfig = {
 	id: string,
 	title: string,
 	description: string,
+	npcPath: string,
 	questType: QuestType,
 	targetValue: number | string, -- ID / Realm Level
 	targetAmount: number, -- How much mob/herb/realm level to finish the quests
@@ -28,6 +29,7 @@ QuestServiceUtils.Data = {
 		id = "Cultivate_01",
 		title = "Journey Begins",
 		description = "Reach Qi Condensation I to prove your worth.",
+		npcPath = "NPC/???",
 		questType = "ReachRealm",
 		targetValue = 11,
 		targetAmount = 11, -- Always same value for both target value and amount for ReachRealm questType
@@ -41,6 +43,7 @@ QuestServiceUtils.Data = {
 		id = "Cultivate_02",
 		title = "Journey Begins (3)",
 		description = "Reach Foundation Establishment I to prove your worth.",
+		npcPath = "NPC/???",
 		questType = "ReachRealm",
 		targetValue = 21,
 		targetAmount = 21, -- Always same value for both target value and amount for ReachRealm questType
@@ -54,6 +57,7 @@ QuestServiceUtils.Data = {
 		id = "Kill_01",
 		title = "Journey Begins (2)",
 		description = "Kill Total 10 Slimes to finish the quest.",
+		npcPath = "NPC/???",
 		questType = "TotalKillEnemy",
 		targetValue = "slime",
 		targetAmount = 10,
@@ -67,6 +71,7 @@ QuestServiceUtils.Data = {
 		id = "Kill_02",
 		title = "Journey Begins (4)",
 		description = "Kill Total 10 Goblins to finish the quest.",
+		npcPath = "NPC/???",
 		questType = "TotalKillEnemy",
 		targetValue = "goblin",
 		targetAmount = 10,
@@ -79,6 +84,7 @@ QuestServiceUtils.Data = {
 		id = "Kill_Goblin_Repeatable",
 		title = "Goblin Outbreak",
 		description = "Defeat 10 Goblins terrorizing the forest.",
+		npcPath = "NPC/GoblinSlayer",
 		questType = "KillEnemy",
 		targetValue = "goblin",
 		targetAmount = 10,

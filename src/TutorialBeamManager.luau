@@ -6,8 +6,11 @@ local TutorialBeamManager = {}
 local activeBeam: Beam? = nil
 local att0: Attachment? = nil
 local att1: Attachment? = nil
+local currentTarget: Instance? = nil -- Track active target instance
 
 function TutorialBeamManager.clear()
+	currentTarget = nil
+
 	if activeBeam then
 		activeBeam:Destroy()
 		activeBeam = nil
@@ -22,12 +25,18 @@ function TutorialBeamManager.clear()
 	end
 end
 
+function TutorialBeamManager.getTarget(): Instance?
+	return currentTarget
+end
+
 function TutorialBeamManager.setTarget(target: Instance?)
 	TutorialBeamManager.clear()
 
 	if not target then
 		return
 	end
+
+	currentTarget = target
 
 	local targetPart: BasePart? = nil
 	if target:IsA("BasePart") then
@@ -38,12 +47,14 @@ function TutorialBeamManager.setTarget(target: Instance?)
 
 	if not targetPart then
 		warn("[TutorialBeamManager] Target has no BasePart to attach Beam to:", target:GetFullName())
+		currentTarget = nil
 		return
 	end
 
 	local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 	local rootPart = character:WaitForChild("HumanoidRootPart", 5) :: BasePart?
 	if not rootPart then
+		currentTarget = nil
 		return
 	end
 
