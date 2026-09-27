@@ -21,6 +21,13 @@ GamepassServiceUtils.Data = {
 		type = "Multiplier",
 		multiplier = 2,
 	},
+	AutoBreakthrough = {
+		id = 1999238906,
+		name = "Auto Breakthrough",
+		description = "Breakthrough automatically without having to click a button!",
+		iconId = "rbxthumb://type=GamePass&id=1999238906&w=150&h=150",
+		type = "AutoBTH",
+	}
 } :: { [string]: GamepassConfig }
 
 local priceCache: { [number]: number } = {}
