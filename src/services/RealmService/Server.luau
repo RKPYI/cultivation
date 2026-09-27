@@ -56,6 +56,9 @@ local function recalculateSpeed(player: Player, realm: number)
 		if not humanoid then
 			return
 		end
+		if ZoneServiceServer.isCultivating[player] then 
+			return 
+		end
 
 		humanoid.WalkSpeed = newWalkspeed
 		humanoid.JumpHeight = newJumpheight
