@@ -6,5 +6,6 @@
 		"**/Client.luau": "${dirname}${filename}.${extname}",
 		"**/Server.luau": "${dirname}${filename}.${extname}",
 		"**/Utils.luau": "${dirname}${filename}.${extname}",
-    },
+	},
+	"luau-lsp.studioPlugin.enabled": true,
 }

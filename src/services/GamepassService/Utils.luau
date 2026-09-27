@@ -16,11 +16,31 @@ GamepassServiceUtils.Data = {
 	DoubleQi = {
 		id = 1981917384, -- Gamepass ID
 		name = "2x Qi Multiplier",
+		description = "Multiply all qi by 2x",
 		iconId = "rbxthumb://type=GamePass&id=1981917384&w=150&h=150",
 		type = "Multiplier",
 		multiplier = 2,
 	},
 } :: { [string]: GamepassConfig }
+
+local priceCache: { [number]: number } = {}
+
+function GamepassServiceUtils.getPassPriceAsync(passId: number): number?
+	if priceCache[passId] then
+		return priceCache[passId]
+	end
+
+	local success, result = pcall(function()
+		return MarketplaceService:GetProductInfoAsync(passId, Enum.InfoType.GamePass)
+	end)
+
+	if success and result and result.PriceInRobux then
+		priceCache[passId] = result.PriceInRobux
+		return result.PriceInRobux
+	end
+
+	return nil
+end
 
 local PassIdToKeyMap: { [number]: string } = {}
 for key, config in GamepassServiceUtils.Data do

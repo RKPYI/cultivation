@@ -21,6 +21,11 @@ A Roblox Incremental where players cultivate, kill mobs, collect spiritual stone
 
 ---
 
+## Important Commands
+- ```rojo sourcemap default.project.json --output sourcemap.json``` <-- Generate sourcemap.
+- ```rojo serve``` <-- Run Rojo Server (To connect it to the Roblox Studio).
+- ```npm run watch:rojo``` <-- Auto update default.project.json everytime you add new file/folders in src.
+
 ## Credits
 - Rojo & Wally -- Modern Lua developer tooling.
 - Leifstout -- Data Store. And more, check [Here](wally.toml) for depedency used.
