@@ -23,7 +23,6 @@ local function GamepassButton(props: GamepassButtonProps)
 		Text = "",
 		LayoutOrder = props.layoutOrder,
 		AutoButtonColor = true,
-		-- [React.Event.Activated] = props.onClick,
 	}, {
 		UIAspectRatioConstraint = e("UIAspectRatioConstraint"),
 		UICorner = e("UICorner", {
@@ -49,10 +48,11 @@ local function GamepassButton(props: GamepassButtonProps)
 
 		BuyButton = e("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromRGB(0, 255, 0),
+			BackgroundColor3 = props.isOwned and Color3.fromRGB(55,100,55) or Color3.fromRGB(0, 255, 0),
 			Position = UDim2.fromScale(0.5, 0.85),
 			Size = UDim2.fromScale(0.66, 0.2),
 			Text = "",
+			[React.Event.Activated] = props.onClick,
 		}, {
 			UICorner = e("UICorner", {
 				CornerRadius = UDim.new(0.2, 0)
