@@ -21,6 +21,7 @@ local Onboarding = require(ReplicatedStorage.UI.views.Onboarding)
 local QiDisplay = require(ReplicatedStorage.UI.views.QiDisplay)
 local Quest = require(ReplicatedStorage.UI.views.Quest)
 local Settings = require(ReplicatedStorage.UI.views.Settings)
+local GamepassBadge = require(ReplicatedStorage.UI.views.GamepassBadge)
 
 local e = React.createElement
 
@@ -138,6 +139,8 @@ local function RootUI()
 		QiMultDisplay = e(QiDisplay, {
 			isInZone = isInZone,
 		}),
+
+		GamepassBadge = e(GamepassBadge),
 
 		MobileControls = e(MobileControls),
 
