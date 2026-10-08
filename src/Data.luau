@@ -5,7 +5,7 @@ local BigNum = require(ReplicatedStorage.Shared.BigNum)
 
 local template = {
 	qi = BigNum.fromNumber(0),
-	spiritualStones = BigNum.fromNumber(1000000),
+	spiritualStones = BigNum.fromNumber(500),
 	realm = 1,
 	spiritualRoot = "Common",
 	rebirth = 0,
